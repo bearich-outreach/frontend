@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+build
+*.pem
+npm-debug.log*
+.env
+.env.local
+.env*.local
+next-env.d.ts
+.DS_Store
+tsconfig.tsbuildinfo
