@@ -8,11 +8,7 @@ import { CashflowAccount, CashflowSummary, Transaction } from "@/lib/types";
 import { CASHFLOW_API, apiGet } from "@/lib/api";
 
 export default function CashflowDashboardPage() {
-  const [month, setMonth] = useState(() => {
-    if (typeof window === "undefined") return "";
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  });
+  const [month, setMonth] = useState("");
   const [summary, setSummary] = useState<CashflowSummary | null>(null);
   const [accounts, setAccounts] = useState<CashflowAccount[]>([]);
   const [recent, setRecent] = useState<Transaction[]>([]);
