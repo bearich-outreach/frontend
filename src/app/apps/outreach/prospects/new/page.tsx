@@ -1,5 +1,5 @@
 "use client";
-import { apiFetch } from "@/lib/api";
+import { OUTREACH_API, apiFetch } from "@/lib/api";
 
 import { useState } from "react";
 
@@ -20,7 +20,7 @@ export default function NewProspectPage() {
     e.preventDefault();
     if (!form.name.trim()) return;
     setBusy(true);
-    const res = await apiFetch("/api/prospects", {
+    const res = await apiFetch(`${OUTREACH_API}/prospects`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -38,7 +38,7 @@ export default function NewProspectPage() {
     e.preventDefault();
     if (!csv.trim()) return;
     setBusy(true);
-    const res = await apiFetch("/api/prospects/import", {
+    const res = await apiFetch(`${OUTREACH_API}/prospects/import`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ csv }),

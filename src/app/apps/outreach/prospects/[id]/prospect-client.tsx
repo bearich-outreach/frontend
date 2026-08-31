@@ -1,5 +1,5 @@
 "use client";
-import { apiFetch } from "@/lib/api";
+import { OUTREACH_API, apiFetch } from "@/lib/api";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -47,7 +47,7 @@ export function ProspectClient({
   async function saveEdit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const res = await apiFetch(`/api/prospects/${p.id}`, {
+    const res = await apiFetch(`${OUTREACH_API}/prospects/${p.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -63,7 +63,7 @@ export function ProspectClient({
   async function generate(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const res = await apiFetch(`/api/prospects/${p.id}/message`, {
+    const res = await apiFetch(`${OUTREACH_API}/prospects/${p.id}/message`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ step }),
@@ -76,7 +76,7 @@ export function ProspectClient({
 
   async function markSent() {
     setBusy(true);
-    const res = await apiFetch(`/api/prospects/${p.id}/advance`, {
+    const res = await apiFetch(`${OUTREACH_API}/prospects/${p.id}/advance`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message }),
@@ -101,7 +101,7 @@ export function ProspectClient({
     setBusy(true);
     const body: Record<string, unknown> = { status: s };
     if (s === "closed" && value) body.value = parseCurrency(value);
-    const res = await apiFetch(`/api/prospects/${p.id}/status`, {
+    const res = await apiFetch(`${OUTREACH_API}/prospects/${p.id}/status`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -117,7 +117,7 @@ export function ProspectClient({
   async function addNote(e: React.FormEvent) {
     e.preventDefault();
     if (!note.trim()) return;
-    await apiFetch(`/api/prospects/${p.id}/note`, {
+    await apiFetch(`${OUTREACH_API}/prospects/${p.id}/note`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ note }),
@@ -128,12 +128,12 @@ export function ProspectClient({
 
   async function remove() {
     if (!confirm("Hapus prospek ini?")) return;
-    await apiFetch(`/api/prospects/${p.id}`, { method: "DELETE" });
-    router.push("/prospects");
+    await apiFetch(`${OUTREACH_API}/prospects/${p.id}`, { method: "DELETE" });
+    router.push("/apps/outreach/prospects");
   }
 
   async function refreshActs() {
-    const res = await apiFetch(`/api/prospects/${p.id}/activities`);
+    const res = await apiFetch(`${OUTREACH_API}/prospects/${p.id}/activities`);
     const data = (await res.json()) as { activities: Activity[] };
     setActs(data.activities);
   }

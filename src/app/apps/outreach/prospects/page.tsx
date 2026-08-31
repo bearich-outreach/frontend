@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import { StatusBadge } from "@/components/bits";
 import { fmtDate } from "@/lib/format";
 import { Prospect, Settings } from "@/lib/types";
-import { API_URL, apiGet } from "@/lib/api";
+import { API_URL, OUTREACH_API, apiGet } from "@/lib/api";
 
-export default function ProspectsPage() {
+export default function OutreachProspectsPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [seqLen, setSeqLen] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -15,8 +15,8 @@ export default function ProspectsPage() {
 
   useEffect(() => {
     Promise.all([
-      apiGet<{ prospects: Prospect[] }>("/api/prospects"),
-      apiGet<{ settings: Settings }>("/api/settings"),
+      apiGet<{ prospects: Prospect[] }>(`${OUTREACH_API}/prospects`),
+      apiGet<{ settings: Settings }>(`${OUTREACH_API}/settings`),
     ])
       .then(([p, s]) => {
         setProspects(p.prospects);
@@ -63,10 +63,10 @@ export default function ProspectsPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <a href={`${API_URL}/api/prospects/export`} className="btn-secondary">
+          <a href={`${API_URL}${OUTREACH_API}/prospects/export`} className="btn-secondary">
             Export CSV
           </a>
-          <Link href="/prospects/new" className="btn-primary">
+          <Link href="/apps/outreach/prospects/new" className="btn-primary">
             + Tambah
           </Link>
         </div>
@@ -92,7 +92,7 @@ export default function ProspectsPage() {
               >
                 <td className="px-4 py-3 font-medium text-zinc-800 dark:text-zinc-100">
                   <Link
-                    href={`/prospects/${p.id}`}
+                    href={`/apps/outreach/prospects/${p.id}`}
                     className="hover:text-brand-600 hover:underline"
                   >
                     {p.name}
@@ -119,7 +119,7 @@ export default function ProspectsPage() {
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-zinc-400">
                   Belum ada prospek. Mulai dari{" "}
-                  <Link href="/prospects/new" className="text-brand-600 underline">
+                  <Link href="/apps/outreach/prospects/new" className="text-brand-600 underline">
                     tambah prospek
                   </Link>
                   .

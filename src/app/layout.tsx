@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bearich Outreach",
-  description: "Sistem otomasi outreach & pipeline freelance web developer",
+  title: "Bearich Hub",
+  description: "Platform multi web-app Bearich — kumpulan aplikasi Anda",
 };
 
 function ThemeScript() {

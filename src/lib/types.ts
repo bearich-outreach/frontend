@@ -62,6 +62,16 @@ export interface SequenceStep {
   template: string;
 }
 
+export interface App {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  enabled: boolean;
+  createdAt: string;
+}
+
 export interface Settings {
   businessName: string;
   services: string[];
@@ -78,4 +88,69 @@ export interface Database {
   prospects: Prospect[];
   activities: Activity[];
   settings: Settings;
+}
+
+export type TransactionType = "in" | "out";
+
+export type AccountType = "tunai" | "ewallet" | "rekening" | "lainnya";
+
+export interface CashflowAccount {
+  id: string;
+  name: string;
+  type: AccountType;
+  createdAt: string;
+}
+
+export const ACCOUNT_TYPES: Record<AccountType, string> = {
+  tunai: "Tunai",
+  ewallet: "E-Wallet",
+  rekening: "Rekening",
+  lainnya: "Lainnya",
+};
+
+export interface Transaction {
+  id: string;
+  type: TransactionType;
+  amount: number;
+  category: string;
+  account: string;
+  description?: string;
+  date: string;
+  createdAt: string;
+}
+
+export interface AccountBalance {
+  account: string;
+  balance: number;
+}
+
+export interface CashflowSummary {
+  totalIn: number;
+  totalOut: number;
+  balance: number;
+  countIn: number;
+  countOut: number;
+  byCategory: Record<string, number>;
+  perAccount: AccountBalance[];
+}
+
+export const CASHFLOW_CATEGORIES = [
+  "Gaji",
+  "Proyek",
+  "Bonus",
+  "Makanan",
+  "Transport",
+  "Tagihan",
+  "Belanja",
+  "Lainnya",
+] as const;
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  pinned: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

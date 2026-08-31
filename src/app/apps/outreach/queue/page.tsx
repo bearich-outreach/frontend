@@ -1,5 +1,5 @@
 "use client";
-import { apiFetch } from "@/lib/api";
+import { OUTREACH_API, apiFetch } from "@/lib/api";
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -14,7 +14,7 @@ interface DueRow {
   loading: boolean;
 }
 
-export default function OutreachPage() {
+export default function OutreachQueuePage() {
   const [rows, setRows] = useState<DueRow[]>([]);
   const [sequence, setSequence] = useState<SequenceStep[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,8 +25,8 @@ export default function OutreachPage() {
     setError("");
     try {
       const [dueRes, seqRes] = await Promise.all([
-        apiFetch("/api/outreach").then((r) => r.json()),
-        apiFetch("/api/settings").then((r) => r.json()),
+        apiFetch(`${OUTREACH_API}/queue`).then((r) => r.json()),
+        apiFetch(`${OUTREACH_API}/settings`).then((r) => r.json()),
       ]);
       const due = (dueRes as { due: Prospect[] }).due;
       const seq = (seqRes as { settings: { sequence: SequenceStep[] } }).settings
@@ -62,7 +62,7 @@ export default function OutreachPage() {
     setRows(updated);
     try {
       const res = await apiFetch(
-        `/api/prospects/${row.prospect.id}/message`,
+        `${OUTREACH_API}/prospects/${row.prospect.id}/message`,
         { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) }
       );
       if (!res.ok) throw new Error("Gagal membuat pesan.");
@@ -78,7 +78,7 @@ export default function OutreachPage() {
   async function markSent(index: number) {
     const row = rows[index];
     try {
-      const res = await apiFetch(`/api/prospects/${row.prospect.id}/advance`, {
+      const res = await apiFetch(`${OUTREACH_API}/prospects/${row.prospect.id}/advance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: row.message }),
@@ -141,7 +141,7 @@ export default function OutreachPage() {
             <div key={p.id} className="card p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <Link href={`/prospects/${p.id}`} className="font-semibold text-zinc-900 hover:underline">
+                  <Link href={`/apps/outreach/prospects/${p.id}`} className="font-semibold text-zinc-900 hover:underline">
                     {p.name}
                   </Link>
                   {p.company && <span className="text-zinc-500">{p.company}</span>}

@@ -1,5 +1,5 @@
 "use client";
-import { apiFetch } from "@/lib/api";
+import { OUTREACH_API, apiFetch } from "@/lib/api";
 
 import { useEffect, useState } from "react";
 import { SequenceStep, Settings } from "@/lib/types";
@@ -13,7 +13,7 @@ export default function SettingsPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    apiFetch("/api/settings")
+    apiFetch(`${OUTREACH_API}/settings`)
       .then((r) => r.json())
       .then((data: { settings: Settings }) => {
         setS(data.settings);
@@ -45,7 +45,7 @@ export default function SettingsPage() {
         .filter(Boolean),
       sequence: parsedSeq,
     };
-    const res = await apiFetch("/api/settings", {
+    const res = await apiFetch(`${OUTREACH_API}/settings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

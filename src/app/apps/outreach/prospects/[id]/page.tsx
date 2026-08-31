@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Activity, Prospect, SequenceStep } from "@/lib/types";
-import { apiGet } from "@/lib/api";
+import { OUTREACH_API, apiGet } from "@/lib/api";
 import { ProspectClient } from "./prospect-client";
 
 export default function ProspectDetailPage() {
@@ -17,9 +17,9 @@ export default function ProspectDetailPage() {
 
   useEffect(() => {
     Promise.all([
-      apiGet<{ prospect: Prospect }>(`/api/prospects/${id}`),
-      apiGet<{ activities: Activity[] }>(`/api/prospects/${id}/activities`),
-      apiGet<{ settings: { sequence: SequenceStep[] } }>("/api/settings"),
+      apiGet<{ prospect: Prospect }>(`${OUTREACH_API}/prospects/${id}`),
+      apiGet<{ activities: Activity[] }>(`${OUTREACH_API}/prospects/${id}/activities`),
+      apiGet<{ settings: { sequence: SequenceStep[] } }>(`${OUTREACH_API}/settings`),
     ])
       .then(([p, a, s]) => {
         setProspect(p.prospect);
@@ -38,7 +38,7 @@ export default function ProspectDetailPage() {
     return (
       <div className="card p-10 text-center text-zinc-500">
         Prospek tidak ditemukan.{" "}
-        <Link href="/prospects" className="text-brand-600 underline">
+        <Link href="/apps/outreach/prospects" className="text-brand-600 underline">
           Kembali ke daftar
         </Link>
         .

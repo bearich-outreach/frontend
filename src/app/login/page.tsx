@@ -1,5 +1,5 @@
 "use client";
-import { apiFetch } from "@/lib/api";
+import { loginPlatform, platformMe } from "@/lib/api";
 
 import { useEffect, useState } from "react";
 
@@ -14,9 +14,9 @@ export default function LoginPage() {
     const n = new URLSearchParams(window.location.search).get("next");
     if (n && n.startsWith("/")) setNext(n);
 
-    apiFetch("/api/me")
-      .then((res) => {
-        if (res.ok) window.location.href = n && n.startsWith("/") ? n : "/";
+    platformMe()
+      .then((ok) => {
+        if (ok) window.location.href = n && n.startsWith("/") ? n : "/";
       })
       .catch(() => {});
   }, []);
@@ -29,21 +29,11 @@ export default function LoginPage() {
     }
     setBusy(true);
     setError("");
-    try {
-      const res = await apiFetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
-      if (res.ok) {
-        window.location.href = next;
-      } else {
-        setError(data.error || "Gagal login.");
-        setBusy(false);
-      }
-    } catch {
-      setError("Tidak dapat terhubung ke server backend API. Coba lagi nanti.");
+    const res = await loginPlatform(username, password);
+    if (res.ok) {
+      window.location.href = next;
+    } else {
+      setError(res.error || "Gagal login.");
       setBusy(false);
     }
   }
@@ -58,10 +48,10 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Bearich Outreach
+            Bearich Hub
           </h1>
           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            Masuk untuk mengelola pipeline outreach Anda.
+            Masuk ke Bearich Hub untuk membuka aplikasi Anda.
           </p>
         </div>
 

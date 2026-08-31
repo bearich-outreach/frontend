@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { StatCard } from "@/components/bits";
 import { fmtDate } from "@/lib/format";
 import { STATUS_LABELS, STATUS_ORDER, Prospect } from "@/lib/types";
-import { apiGet } from "@/lib/api";
+import { OUTREACH_API, apiGet } from "@/lib/api";
 
 interface Metrics {
   total: number;
@@ -17,14 +17,17 @@ interface Metrics {
   byStatus: Record<string, number>;
 }
 
-export default function DashboardPage() {
+export default function OutreachDashboardPage() {
   const [m, setM] = useState<Metrics | null>(null);
   const [due, setDue] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.all([apiGet<{ metrics: Metrics }>("/api/stats"), apiGet<{ due: Prospect[] }>("/api/outreach")])
+    Promise.all([
+      apiGet<{ metrics: Metrics }>(`${OUTREACH_API}/stats`),
+      apiGet<{ due: Prospect[] }>(`${OUTREACH_API}/queue`),
+    ])
       .then(([s, o]) => {
         setM(s.metrics);
         setDue(o.due);
@@ -118,7 +121,7 @@ export default function DashboardPage() {
             ))}
           </ul>
         )}
-        <Link href="/outreach" className="btn-primary mt-3 inline-flex">
+        <Link href="/apps/outreach/queue" className="btn-primary mt-3 inline-flex">
           Buka Outreach Queue
         </Link>
       </div>

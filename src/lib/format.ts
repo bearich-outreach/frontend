@@ -1,3 +1,9 @@
+export function fmtRupiah(n?: number): string {
+  const value = Number(n ?? 0);
+  if (!Number.isFinite(value)) return "Rp 0";
+  return `Rp ${value.toLocaleString("id-ID")}`;
+}
+
 export function fmtDate(iso?: string): string {
   if (!iso) return "—";
   const d = new Date(iso);

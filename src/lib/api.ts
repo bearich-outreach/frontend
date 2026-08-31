@@ -1,6 +1,12 @@
+import { App } from "@/lib/types";
+
 export const API_URL = (
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
 ).replace(/\/+$/, "");
+
+export const OUTREACH_API = "/api/apps/outreach";
+export const CASHFLOW_API = "/api/apps/cashflow";
+export const NOTES_API = "/api/apps/notes";
 
 export function redirectToLogin() {
   if (typeof window === "undefined" || window.location.pathname === "/login") return;
@@ -27,11 +33,8 @@ export async function apiFetch(
     credentials: "include",
   });
 
-  if (
-    res.status === 401 &&
-    !path.startsWith("/api/login") &&
-    !path.startsWith("/api/me")
-  ) {
+  const isPlatform = path.startsWith("/api/platform/");
+  if (res.status === 401 && !isPlatform) {
     redirectToLogin();
     throw new Error("Unauthorized");
   }
@@ -43,4 +46,34 @@ export async function apiGet<T>(path: string): Promise<T> {
   const res = await apiFetch(path);
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
   return (await res.json()) as T;
+}
+
+/* ---------- Platform & Apps auth ---------- */
+
+export async function loginPlatform(
+  username: string,
+  password: string
+): Promise<{ ok: boolean; error?: string }> {
+  const res = await apiFetch("/api/platform/login", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+  });
+  const data = (await res.json().catch(() => ({}))) as { error?: string };
+  return { ok: res.ok, error: data.error };
+}
+
+export async function platformMe(): Promise<boolean> {
+  const res = await apiFetch("/api/platform/me");
+  return res.ok;
+}
+
+export async function fetchApps(): Promise<App[]> {
+  const res = await apiFetch("/api/apps");
+  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+  const data = (await res.json()) as { apps: App[] };
+  return data.apps;
+}
+
+export async function logoutPlatform(): Promise<void> {
+  await apiFetch("/api/platform/logout").catch(() => {});
 }
