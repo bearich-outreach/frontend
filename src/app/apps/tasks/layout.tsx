@@ -11,7 +11,11 @@ export default function TasksLayout({
     <AppSkeletonShell
       slug="tasks"
       appName="Task Management"
-      nav={[{ href: "/apps/tasks", label: "Dashboard" }]}
+      nav={[
+        { href: "/apps/tasks", label: "Dashboard" },
+        { href: "/apps/tasks/list", label: "Tugas" },
+        { href: "/apps/tasks/new", label: "+ Tugas Baru" },
+      ]}
     >
       {children}
     </AppSkeletonShell>

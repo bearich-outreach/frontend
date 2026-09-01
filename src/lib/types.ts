@@ -159,3 +159,40 @@ export interface Note {
   createdAt: string;
   updatedAt: string;
 }
+
+export type TaskStatus = "todo" | "in_progress" | "done";
+export type TaskPriority = "low" | "medium" | "high";
+
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueDate?: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+}
+
+export interface TaskStats {
+  total: number;
+  todo: number;
+  inProgress: number;
+  done: number;
+  overdue: number;
+  dueToday: number;
+  doneToday: number;
+}
+
+export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
+  todo: "To Do",
+  in_progress: "In Progress",
+  done: "Selesai",
+};
+
+export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
+  low: "Rendah",
+  medium: "Sedang",
+  high: "Tinggi",
+};

@@ -66,6 +66,32 @@ export default function CashflowSettingsPage() {
   const reached =
     settings && settings.targetAmount > 0 && balance >= settings.targetAmount;
 
+  async function remove() {
+    if (!settings || settings.targetAmount <= 0) return;
+    if (
+      !confirm("Hapus target tabungan? Progress bar di dashboard akan disembunyikan.")
+    )
+      return;
+    setError("");
+    setSaved("");
+    setBusy(true);
+    const res = await apiFetch(`${CASHFLOW_API}/settings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ targetAmount: 0 }),
+    });
+    setBusy(false);
+    if (res.ok) {
+      setSettings({ targetAmount: 0, targetType: "saving" });
+      setTargetText("");
+      setSaved("Target dihapus.");
+      setTimeout(() => setSaved(""), 2000);
+    } else {
+      const d = (await res.json().catch(() => ({}))) as { error?: string };
+      setError(d.error || "Gagal menghapus target.");
+    }
+  }
+
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
@@ -126,12 +152,24 @@ export default function CashflowSettingsPage() {
               onChange={(e) => setTargetText(e.target.value)}
             />
             <p className="mt-1 text-xs text-zinc-500">
-              Kosongkan atau isi 0 untuk menonaktifkan progress bar di dashboard.
+              Progress bar di dashboard muncul hanya saat target diisi.
             </p>
           </div>
-          <button className="btn-primary" disabled={busy}>
-            {busy ? "Menyimpan..." : "Simpan Target"}
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button className="btn-primary" disabled={busy}>
+              {busy ? "Menyimpan..." : "Simpan Target"}
+            </button>
+            {settings && settings.targetAmount > 0 && (
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={remove}
+                disabled={busy}
+              >
+                Hapus Target
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>
