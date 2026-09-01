@@ -7,6 +7,7 @@ import {
   PlusIcon,
   CardStackIcon,
   ShuffleIcon,
+  TargetIcon,
   ArrowLeftIcon,
 } from "@radix-ui/react-icons";
 import { AppAuthGate } from "@/components/app-auth-gate";
@@ -17,6 +18,7 @@ const NAV = [
   { href: "/apps/cashflow/transactions", label: "Transaksi", icon: TableIcon },
   { href: "/apps/cashflow/accounts", label: "Akun", icon: CardStackIcon },
   { href: "/apps/cashflow/transfer", label: "Transfer", icon: ShuffleIcon },
+  { href: "/apps/cashflow/settings", label: "Target", icon: TargetIcon },
   { href: "/apps/cashflow/transactions/new", label: "+ Catat Transaksi", icon: PlusIcon },
 ];
 

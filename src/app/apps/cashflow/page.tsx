@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { StatCard } from "@/components/bits";
 import { fmtDate, fmtRupiah } from "@/lib/format";
-import { CashflowAccount, CashflowSummary, Transaction } from "@/lib/types";
+import { CashflowAccount, CashflowSettings, CashflowSummary, Transaction } from "@/lib/types";
 import { CASHFLOW_API, apiGet } from "@/lib/api";
 
 export default function CashflowDashboardPage() {
   const [month, setMonth] = useState("");
   const [summary, setSummary] = useState<CashflowSummary | null>(null);
+  const [settings, setSettings] = useState<CashflowSettings | null>(null);
+  const [balanceAll, setBalanceAll] = useState(0);
   const [accounts, setAccounts] = useState<CashflowAccount[]>([]);
   const [recent, setRecent] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,14 +22,17 @@ export default function CashflowDashboardPage() {
     setError("");
     try {
       const q = m ? `?month=${m}` : "";
-      const [s, t, a] = await Promise.all([
+      const [s, t, a, st] = await Promise.all([
         apiGet<{ summary: CashflowSummary }>(`${CASHFLOW_API}/summary${q}`),
         apiGet<{ transactions: Transaction[] }>(`${CASHFLOW_API}/transactions${q}`),
         apiGet<{ accounts: CashflowAccount[] }>(`${CASHFLOW_API}/accounts`),
+        apiGet<{ settings: CashflowSettings; balance: number }>(`${CASHFLOW_API}/settings`),
       ]);
       setSummary(s.summary);
       setRecent(t.transactions.slice(0, 8));
       setAccounts(a.accounts);
+      setSettings(st.settings);
+      setBalanceAll(st.balance);
       setLoading(false);
     } catch (e) {
       if (e instanceof Error && e.message !== "Unauthorized") {
@@ -45,6 +50,11 @@ export default function CashflowDashboardPage() {
   const balanceByAccount = new Map(
     (summary?.perAccount ?? []).map((b) => [b.account, b.balance])
   );
+
+  const target = settings?.targetAmount ?? 0;
+  const targetActive = target > 0;
+  const progress = targetActive ? Math.max(0, Math.min(1, balanceAll / target)) : 0;
+  const reached = targetActive && balanceAll >= target;
 
   return (
     <div className="space-y-6">
@@ -102,6 +112,56 @@ export default function CashflowDashboardPage() {
                 sub={(summary?.balance ?? 0) >= 0 ? "surplus" : "defisit"}
               />
             </div>
+
+            {targetActive && (
+              <div className={`card p-5 ${reached ? "border-emerald-400 dark:border-emerald-500/50" : ""}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                      Target Tabungan
+                    </h2>
+                    {reached && (
+                      <span className="inline-flex items-center rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-xs font-medium dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+                        Target tercapai 🎉
+                      </span>
+                    )}
+                  </div>
+                  <Link href="/apps/cashflow/settings" className="text-sm text-brand-600 hover:underline">
+                    Atur target
+                  </Link>
+                </div>
+
+                <div className="mb-1 flex items-baseline justify-between">
+                  <span className="text-sm text-zinc-600 dark:text-zinc-300">
+                    {fmtRupiah(balanceAll)} dari {fmtRupiah(target)}
+                  </span>
+                  <span className={`text-sm font-semibold ${reached ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-700 dark:text-zinc-200"}`}>
+                    {Math.round(progress * 100)}%
+                  </span>
+                </div>
+
+                <div className="h-3 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      reached
+                        ? "bg-emerald-500"
+                        : balanceAll < 0
+                        ? "bg-rose-500"
+                        : "bg-brand-500"
+                    }`}
+                    style={{ width: `${progress * 100}%` }}
+                  />
+                </div>
+
+                <p className="mt-2 text-xs text-zinc-500">
+                  {reached
+                    ? "Selamat, target tabungan Anda tercapai."
+                    : balanceAll < 0
+                    ? "Saldo masih negatif. Target tercapai saat saldo melebihi target."
+                    : `Tinggal ${fmtRupiah(target - balanceAll)} lagi untuk mencapai target.`}
+                </p>
+              </div>
+            )}
 
             <div className="card p-5">
               <div className="flex items-center justify-between mb-3">

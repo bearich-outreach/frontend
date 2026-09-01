@@ -124,6 +124,11 @@ export interface AccountBalance {
   balance: number;
 }
 
+export interface CashflowSettings {
+  targetAmount: number;
+  targetType: "saving";
+}
+
 export interface CashflowSummary {
   totalIn: number;
   totalOut: number;
