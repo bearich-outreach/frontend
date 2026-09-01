@@ -10,11 +10,8 @@ import { CASHFLOW_API, apiFetch } from "@/lib/api";
 export default function CashflowTransactionsPage() {
   const [rows, setRows] = useState<Transaction[]>([]);
   const [accounts, setAccounts] = useState<CashflowAccount[]>([]);
-  const [month, setMonth] = useState(() => {
-    if (typeof window === "undefined") return "";
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  });
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [type, setType] = useState("");
   const [category, setCategory] = useState("");
   const [account, setAccount] = useState("");
@@ -28,7 +25,8 @@ export default function CashflowTransactionsPage() {
     setError("");
     try {
       const params = new URLSearchParams();
-      if (month) params.set("month", month);
+      if (startDate) params.set("startDate", startDate);
+      if (endDate) params.set("endDate", endDate);
       if (type) params.set("type", type);
       if (category) params.set("category", category);
       if (account) params.set("account", account);
@@ -49,7 +47,7 @@ export default function CashflowTransactionsPage() {
       }
       setLoading(false);
     }
-  }, [month, type, category, account]);
+  }, [startDate, endDate, type, category, account]);
 
   useEffect(() => {
     load();
@@ -106,10 +104,17 @@ export default function CashflowTransactionsPage() {
 
       <div className="flex flex-wrap items-center gap-2">
         <input
-          type="month"
+          type="date"
           className="input !w-auto"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+        <span className="text-xs text-zinc-400">s/d</span>
+        <input
+          type="date"
+          className="input !w-auto"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
         />
         <select className="input !w-auto" value={type} onChange={(e) => setType(e.target.value)}>
           <option value="">Semua tipe</option>
@@ -128,11 +133,12 @@ export default function CashflowTransactionsPage() {
             <option key={a.id} value={a.name}>{a.name}</option>
           ))}
         </select>
-        {(month || type || category || account) && (
+        {(startDate || endDate || type || category || account) && (
           <button
             className="btn-secondary"
             onClick={() => {
-              setMonth("");
+              setStartDate("");
+              setEndDate("");
               setType("");
               setCategory("");
               setAccount("");

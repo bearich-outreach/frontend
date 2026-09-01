@@ -8,7 +8,8 @@ import { CashflowAccount, CashflowSettings, CashflowSummary, Transaction } from 
 import { CASHFLOW_API, apiGet } from "@/lib/api";
 
 export default function CashflowDashboardPage() {
-  const [filterDate, setFilterDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [summary, setSummary] = useState<CashflowSummary | null>(null);
   const [settings, setSettings] = useState<CashflowSettings | null>(null);
   const [balanceAll, setBalanceAll] = useState(0);
@@ -17,11 +18,14 @@ export default function CashflowDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const load = useCallback(async (d: string) => {
+  const load = useCallback(async (sd: string, ed: string) => {
     setLoading(true);
     setError("");
     try {
-      const q = d ? `?date=${d}` : "";
+      const params = new URLSearchParams();
+      if (sd) params.set("startDate", sd);
+      if (ed) params.set("endDate", ed);
+      const q = params.toString() ? `?${params.toString()}` : "";
       const [s, t, a, st] = await Promise.all([
         apiGet<{ summary: CashflowSummary }>(`${CASHFLOW_API}/summary${q}`),
         apiGet<{ transactions: Transaction[] }>(`${CASHFLOW_API}/transactions${q}`),
@@ -43,8 +47,8 @@ export default function CashflowDashboardPage() {
   }, []);
 
   useEffect(() => {
-    load(filterDate);
-  }, [filterDate, load]);
+    load(startDate, endDate);
+  }, [startDate, endDate, load]);
 
   const catEntries = Object.entries(summary?.byCategory ?? {});
   const balanceByAccount = new Map(
@@ -56,12 +60,28 @@ export default function CashflowDashboardPage() {
   const progress = targetActive ? Math.max(0, Math.min(1, balanceAll / target)) : 0;
   const reached = targetActive && balanceAll >= target;
 
-  const dateLabel = filterDate ? fmtDate(filterDate) : "Semua waktu";
+  const dateLabel = (() => {
+    if (startDate && endDate) return `${fmtDate(startDate)} – ${fmtDate(endDate)}`;
+    if (startDate) return `dari ${fmtDate(startDate)}`;
+    if (endDate) return `sampai ${fmtDate(endDate)}`;
+    return "Semua waktu";
+  })();
 
+  const todayStr = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
   const presetDate = (offsetDays: number) => {
     const d = new Date();
     d.setDate(d.getDate() + offsetDays);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+  const presetBulanIni = () => {
+    const d = new Date();
+    const start = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
+    const last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    const end = `${last.getFullYear()}-${String(last.getMonth() + 1).padStart(2, "0")}-${String(last.getDate()).padStart(2, "0")}`;
+    return { start, end };
   };
 
   return (
@@ -80,29 +100,70 @@ export default function CashflowDashboardPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 p-1">
-            {[
-              { label: "Hari ini", value: presetDate(0) },
-              { label: "Kemarin", value: presetDate(-1) },
-              { label: "Semua waktu", value: "" },
-            ].map((p) => (
-              <button
-                key={p.label}
-                onClick={() => setFilterDate(p.value)}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                  filterDate === p.value
-                    ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
-                    : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
+            <button
+              onClick={() => {
+                const v = presetDate(0);
+                setStartDate(v);
+                setEndDate(v);
+              }}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                startDate && endDate && startDate === endDate && startDate === presetDate(0)
+                  ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                  : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              }`}
+            >
+              Hari ini
+            </button>
+            <button
+              onClick={() => {
+                const v = presetDate(-1);
+                setStartDate(v);
+                setEndDate(v);
+              }}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                startDate && endDate && startDate === endDate && startDate === presetDate(-1)
+                  ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                  : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              }`}
+            >
+              Kemarin
+            </button>
+            <button
+              onClick={() => {
+                const { start, end } = presetBulanIni();
+                setStartDate(start);
+                setEndDate(end);
+              }}
+              className="rounded-md px-2.5 py-1 text-xs font-medium transition-colors text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            >
+              Bulan ini
+            </button>
+            <button
+              onClick={() => {
+                setStartDate("");
+                setEndDate("");
+              }}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                !startDate && !endDate
+                  ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                  : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              }`}
+            >
+              Semua waktu
+            </button>
           </div>
           <input
             type="date"
             className="input !w-auto"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <span className="text-xs text-zinc-400">s/d</span>
+          <input
+            type="date"
+            className="input !w-auto"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
       </div>
@@ -110,7 +171,7 @@ export default function CashflowDashboardPage() {
       {error && (
         <div className="card p-8 text-center">
           <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>
-          <button className="btn-primary mt-4" onClick={() => load(filterDate)}>
+          <button className="btn-primary mt-4" onClick={() => load(startDate, endDate)}>
             Muat ulang
           </button>
         </div>
@@ -214,7 +275,7 @@ export default function CashflowDashboardPage() {
                   <p className="text-sm text-zinc-500">Belum ada akun.</p>
                 )}
               </div>
-              {filterDate && <p className="mt-3 text-xs text-zinc-400">Menampilkan saldo bersih per akun untuk {dateLabel}.</p>}
+              {(startDate || endDate) && <p className="mt-3 text-xs text-zinc-400">Menampilkan saldo bersih per akun untuk {dateLabel}.</p>}
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -224,7 +285,7 @@ export default function CashflowDashboardPage() {
                   <span className="ml-2 text-xs font-normal text-zinc-500">· {dateLabel}</span>
                 </h2>
                 {catEntries.length === 0 ? (
-                  <p className="text-sm text-zinc-500">Belum ada transaksi {filterDate ? `pada ${dateLabel}` : ""}.</p>
+                  <p className="text-sm text-zinc-500">Belum ada transaksi {startDate || endDate ? `pada ${dateLabel}` : ""}.</p>
                 ) : (
                   <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
                     {catEntries.map(([cat, amt]) => (
@@ -245,7 +306,7 @@ export default function CashflowDashboardPage() {
                   <span className="ml-2 text-xs font-normal text-zinc-500">· {dateLabel}</span>
                 </h2>
                 {recent.length === 0 ? (
-                  <p className="text-sm text-zinc-500">Belum ada transaksi {filterDate ? `pada ${dateLabel}` : ""}.</p>
+                  <p className="text-sm text-zinc-500">Belum ada transaksi {startDate || endDate ? `pada ${dateLabel}` : ""}.</p>
                 ) : (
                   <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
                     {recent.map((t) => (
