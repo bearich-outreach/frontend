@@ -11,7 +11,7 @@ export default function TasksListPage() {
   const [rows, setRows] = useState<Task[]>([]);
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
-  const [search, setSearch] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ export default function TasksListPage() {
       const params = new URLSearchParams();
       if (status) params.set("status", status);
       if (priority) params.set("priority", priority);
-      if (search) params.set("search", search);
+      if (dueDate) params.set("dueDate", dueDate);
       const q = params.toString();
       const res = await apiFetch(`${TASKS_API}/tasks${q ? `?${q}` : ""}`);
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
@@ -37,7 +37,7 @@ export default function TasksListPage() {
       }
       setLoading(false);
     }
-  }, [status, priority, search]);
+  }, [status, priority, dueDate]);
 
   useEffect(() => {
     load();
@@ -97,10 +97,10 @@ export default function TasksListPage() {
 
       <div className="flex flex-wrap items-center gap-2">
         <input
-          className="input max-w-xs"
-          placeholder="Cari tugas..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          type="date"
+          className="input !w-auto"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
         />
         <select className="input !w-auto" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">Semua status</option>
@@ -114,11 +114,11 @@ export default function TasksListPage() {
           <option value="medium">Sedang</option>
           <option value="high">Tinggi</option>
         </select>
-        {(search || status || priority) && (
+        {(dueDate || status || priority) && (
           <button
             className="btn-secondary"
             onClick={() => {
-              setSearch("");
+              setDueDate("");
               setStatus("");
               setPriority("");
             }}
