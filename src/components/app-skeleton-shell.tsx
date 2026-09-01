@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { AppAuthGate } from "@/components/app-auth-gate";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -35,6 +36,9 @@ function Shell({
   children: React.ReactNode;
 }) {
   const initial = appName.charAt(0).toUpperCase();
+  const pathname = usePathname();
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   return (
     <div className="min-h-[100dvh] flex">
@@ -48,7 +52,11 @@ function Shell({
 
         <nav className="flex flex-col gap-1 text-sm">
           {nav.map((l) => (
-            <Link key={l.href} href={l.href} className="nav-link">
+            <Link
+              key={l.href}
+              href={l.href}
+              className={isActive(l.href) ? "nav-link-active" : "nav-link"}
+            >
               {l.label}
             </Link>
           ))}
@@ -78,7 +86,11 @@ function Shell({
           </div>
           <nav className="mt-2 flex gap-1 overflow-x-auto text-sm -mx-1 px-1">
             {nav.map((l) => (
-              <Link key={l.href} href={l.href} className="nav-link shrink-0">
+              <Link
+                key={l.href}
+                href={l.href}
+                className={isActive(l.href) ? "nav-link-active shrink-0" : "nav-link shrink-0"}
+              >
                 {l.label}
               </Link>
             ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   DashboardIcon,
   StackIcon,
@@ -33,6 +34,12 @@ export default function OutreachLayout({
 }
 
 function OutreachShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isActive = (href: string) =>
+    href === "/apps/outreach"
+      ? pathname === href
+      : pathname === href || pathname.startsWith(href + "/");
+
   return (
     <div className="min-h-[100dvh] flex">
       <aside className="w-60 shrink-0 bg-zinc-950 text-zinc-200 p-4 hidden md:flex flex-col fixed inset-y-0">
@@ -47,7 +54,11 @@ function OutreachShell({ children }: { children: React.ReactNode }) {
 
         <nav className="flex flex-col gap-1 text-sm">
           {NAV.map((l) => (
-            <Link key={l.href} href={l.href} className="nav-link">
+            <Link
+              key={l.href}
+              href={l.href}
+              className={isActive(l.href) ? "nav-link-active" : "nav-link"}
+            >
               <l.icon />
               {l.label}
             </Link>
@@ -78,7 +89,11 @@ function OutreachShell({ children }: { children: React.ReactNode }) {
           </div>
           <nav className="mt-2 flex gap-1 overflow-x-auto text-sm -mx-1 px-1">
             {NAV.map((l) => (
-              <Link key={l.href} href={l.href} className="nav-link shrink-0">
+              <Link
+                key={l.href}
+                href={l.href}
+                className={isActive(l.href) ? "nav-link-active shrink-0" : "nav-link shrink-0"}
+              >
                 {l.label}
               </Link>
             ))}

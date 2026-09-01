@@ -56,6 +56,19 @@ export default function CashflowDashboardPage() {
   const progress = targetActive ? Math.max(0, Math.min(1, balanceAll / target)) : 0;
   const reached = targetActive && balanceAll >= target;
 
+  const monthLabel = (() => {
+    if (!month) return "Semua waktu";
+    const [y, mo] = month.split("-");
+    const d = new Date(Number(y), Number(mo) - 1);
+    return d.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+  })();
+
+  const presetMonth = (offset: number) => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + offset);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -64,21 +77,38 @@ export default function CashflowDashboardPage() {
             Dashboard
           </h1>
           <p className="text-sm text-zinc-500">
-            Rekap uang masuk & keluar per akun. Kosongkan bulan untuk seluruh waktu.
+            Rekap uang masuk & keluar per akun
+            <span className="ml-1 font-medium text-zinc-700 dark:text-zinc-300">
+              · {monthLabel}
+            </span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 p-1">
+            {[
+              { label: "Bulan ini", value: presetMonth(0) },
+              { label: "Bulan lalu", value: presetMonth(-1) },
+              { label: "Semua waktu", value: "" },
+            ].map((p) => (
+              <button
+                key={p.label}
+                onClick={() => setMonth(p.value)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  month === p.value
+                    ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                    : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
           <input
             type="month"
             className="input !w-auto"
             value={month}
             onChange={(e) => setMonth(e.target.value)}
           />
-          {month && (
-            <button className="btn-secondary" onClick={() => setMonth("")}>
-              Semua waktu
-            </button>
-          )}
         </div>
       </div>
 
@@ -167,6 +197,7 @@ export default function CashflowDashboardPage() {
               <div className="flex items-center justify-between mb-3">
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
                   Saldo per Akun
+                  <span className="ml-2 text-xs font-normal text-zinc-500">· {monthLabel}</span>
                 </h2>
                 <Link href="/apps/cashflow/accounts" className="text-sm text-brand-600 hover:underline">
                   Kelola akun
@@ -188,15 +219,17 @@ export default function CashflowDashboardPage() {
                   <p className="text-sm text-zinc-500">Belum ada akun.</p>
                 )}
               </div>
+              {month && <p className="mt-3 text-xs text-zinc-400">Menampilkan saldo bersih per akun untuk {monthLabel}.</p>}
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="card p-5">
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
                   Rincian per Kategori
+                  <span className="ml-2 text-xs font-normal text-zinc-500">· {monthLabel}</span>
                 </h2>
                 {catEntries.length === 0 ? (
-                  <p className="text-sm text-zinc-500">Belum ada transaksi.</p>
+                  <p className="text-sm text-zinc-500">Belum ada transaksi {month ? `pada ${monthLabel}` : ""}.</p>
                 ) : (
                   <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
                     {catEntries.map(([cat, amt]) => (
@@ -214,9 +247,10 @@ export default function CashflowDashboardPage() {
               <div className="card p-5">
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
                   Transaksi Terbaru
+                  <span className="ml-2 text-xs font-normal text-zinc-500">· {monthLabel}</span>
                 </h2>
                 {recent.length === 0 ? (
-                  <p className="text-sm text-zinc-500">Belum ada transaksi.</p>
+                  <p className="text-sm text-zinc-500">Belum ada transaksi {month ? `pada ${monthLabel}` : ""}.</p>
                 ) : (
                   <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
                     {recent.map((t) => (
