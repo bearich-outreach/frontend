@@ -91,7 +91,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900">Settings</h1>
           <p className="text-sm text-zinc-500">
@@ -165,7 +165,7 @@ export default function SettingsPage() {
             <option value="deepseek">DeepSeek</option>
           </select>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="label">API Key DeepSeek</label>
             <input

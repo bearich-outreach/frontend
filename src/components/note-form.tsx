@@ -66,7 +66,7 @@ export function NoteForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="label">Tag (pisahkan dengan koma)</label>
           <input

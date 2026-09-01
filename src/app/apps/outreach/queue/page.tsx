@@ -114,7 +114,7 @@ export default function OutreachQueuePage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900">Outreach Queue</h1>
           <p className="text-sm text-zinc-500">
@@ -139,8 +139,8 @@ export default function OutreachQueuePage() {
           const p = row.prospect;
           return (
             <div key={p.id} className="card p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <Link href={`/apps/outreach/prospects/${p.id}`} className="font-semibold text-zinc-900 hover:underline">
                     {p.name}
                   </Link>
@@ -153,7 +153,7 @@ export default function OutreachQueuePage() {
                 </div>
               </div>
 
-              <div className="flex gap-2 mb-3">
+              <div className="flex flex-wrap gap-2 mb-3">
                 <button className="btn-primary" onClick={() => generate(row, i)} disabled={row.loading}>
                   {row.loading ? "Membuat..." : row.message ? "Regenerate" : "Generate Pesan"}
                 </button>

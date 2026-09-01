@@ -129,7 +129,7 @@ export default function CashflowAccountsPage() {
 
       <div className="card p-5">
         <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Tambah Akun</h2>
-        <form onSubmit={add} className="grid grid-cols-2 gap-3 items-end">
+        <form onSubmit={add} className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
           <div>
             <label className="label">Nama akun</label>
             <input
@@ -198,7 +198,7 @@ export default function CashflowAccountsPage() {
             <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">Edit Akun</h2>
             <button className="btn-secondary !py-1" onClick={() => setEditing(null)}>Batal</button>
           </div>
-          <form onSubmit={saveEdit} className="grid grid-cols-2 gap-3 items-end">
+          <form onSubmit={saveEdit} className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
             <div>
               <label className="label">Nama akun</label>
               <input className="input" value={editName} onChange={(e) => setEditName(e.target.value)} required />

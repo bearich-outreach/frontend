@@ -140,9 +140,9 @@ export function ProspectClient({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-bold text-zinc-900">{p.name}</h1>
             <StatusBadge status={p.status} />
           </div>
@@ -153,7 +153,7 @@ export function ProspectClient({
             {p.contact ? ` · ${p.contact}` : ""}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button className="btn-secondary" onClick={() => setEditing(!editing)}>
             Edit
           </button>
@@ -165,7 +165,7 @@ export function ProspectClient({
 
       {editing && (
         <form onSubmit={saveEdit} className="card p-5 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Nama</label>
               <input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
@@ -225,7 +225,7 @@ export function ProspectClient({
                   {message}
                 </div>
               )}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button className="btn-primary" disabled={busy}>
                   {usedAI ? "Regenerate (AI)" : "Generate Pesan"}
                 </button>
@@ -254,7 +254,7 @@ export function ProspectClient({
               ))}
             </div>
             {p.status === "closed" && (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <input
                   className="input"
                   placeholder="Nilai deal (Rp)"

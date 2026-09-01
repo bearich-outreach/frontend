@@ -77,7 +77,7 @@ export default function CashflowTransferPage() {
 
       <div className="card p-6">
         <form onSubmit={submit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Dari akun</label>
               <select className="input" value={from} onChange={(e) => setFrom(e.target.value)} required>
@@ -98,7 +98,7 @@ export default function CashflowTransferPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Nominal (Rp)</label>
               <input

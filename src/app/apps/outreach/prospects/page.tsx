@@ -53,7 +53,7 @@ export default function OutreachProspectsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
             Prospects
@@ -62,7 +62,7 @@ export default function OutreachProspectsPage() {
             {prospects.length} prospek dalam pipeline.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <a href={`${API_URL}${OUTREACH_API}/prospects/export`} className="btn-secondary">
             Export CSV
           </a>

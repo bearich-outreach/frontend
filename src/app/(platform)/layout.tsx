@@ -54,7 +54,7 @@ export default function PlatformLayout({
             <span className="text-base font-semibold text-zinc-900 dark:text-white">
               Bearich Hub
             </span>
-            <span className="text-xs font-medium text-zinc-400 border border-zinc-200 dark:border-zinc-700 rounded-full px-2 py-0.5">
+            <span className="hidden sm:inline-flex text-xs font-medium text-zinc-400 border border-zinc-200 dark:border-zinc-700 rounded-full px-2 py-0.5">
               Hub
             </span>
           </div>
