@@ -67,15 +67,15 @@ export default function CashflowTransferPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Transfer</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Transfer</h1>
         <p className="text-sm text-zinc-500">
           Pindahkan uang antar akun (mis. Tunai ke Rekening). Tidak memengaruhi saldo total.
         </p>
       </div>
 
-      <div className="card p-6">
+      <div className="card p-4 sm:p-6">
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>

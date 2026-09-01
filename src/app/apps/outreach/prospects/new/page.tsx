@@ -52,9 +52,9 @@ export default function NewProspectPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900">Tambah Prospek</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Tambah Prospek</h1>
         <p className="text-sm text-zinc-500">
           Tambah manual satu per satu atau import massal via CSV.
         </p>
@@ -66,8 +66,8 @@ export default function NewProspectPage() {
         </div>
       )}
 
-      <div className="card p-5">
-        <h2 className="font-semibold text-zinc-900 mb-4">Tambah manual</h2>
+      <div className="card p-4 sm:p-5">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Tambah manual</h2>
         <form onSubmit={submitSingle} className="space-y-3">
           <div>
             <label className="label">Nama *</label>
@@ -133,8 +133,8 @@ export default function NewProspectPage() {
         </form>
       </div>
 
-      <div className="card p-5">
-        <h2 className="font-semibold text-zinc-900 mb-1">Import CSV massal</h2>
+      <div className="card p-4 sm:p-5">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Import CSV massal</h2>
         <p className="text-xs text-zinc-500 mb-3">
           Format: <code>name,company,channel,contact,segment,notes</code> per baris,
           header baris pertama.

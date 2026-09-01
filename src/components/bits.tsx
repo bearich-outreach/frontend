@@ -48,15 +48,15 @@ export function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="card p-4">
-      <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+    <div className="card p-3 sm:p-4">
+      <div className="text-[11px] sm:text-xs font-medium text-zinc-500 dark:text-zinc-400 leading-tight">
         {label}
       </div>
-      <div className="mt-1 font-mono text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+      <div className="mt-1 font-mono text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 break-words">
         {value}
       </div>
       {sub && (
-        <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
+        <div className="mt-0.5 text-[11px] sm:text-xs text-zinc-400 dark:text-zinc-500 line-clamp-2">
           {sub}
         </div>
       )}

@@ -108,9 +108,9 @@ export default function CashflowAccountsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-4 sm:space-y-6 max-w-3xl">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Akun</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Akun</h1>
         <p className="text-sm text-zinc-500">
           Kelola tempat penyimpanan uang: Tunai, E-Wallet, Rekening, dan lainnya.
         </p>
@@ -127,8 +127,8 @@ export default function CashflowAccountsPage() {
         </div>
       )}
 
-      <div className="card p-5">
-        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Tambah Akun</h2>
+      <div className="card p-4 sm:p-5">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4 text-sm sm:text-base">Tambah Akun</h2>
         <form onSubmit={add} className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
           <div>
             <label className="label">Nama akun</label>
@@ -148,13 +148,14 @@ export default function CashflowAccountsPage() {
               ))}
             </select>
           </div>
-          <button className="btn-primary col-span-2 sm:col-span-1" disabled={busy}>
+          <button className="btn-primary col-span-1 sm:col-span-2 lg:col-span-1 w-full sm:w-auto" disabled={busy}>
             {busy ? "Menyimpan..." : "Tambah Akun"}
           </button>
         </form>
       </div>
 
-      <div className="card overflow-x-auto">
+      {/* Desktop table */}
+      <div className="hidden sm:block card overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs text-zinc-500 border-b border-zinc-200 dark:border-zinc-800">
@@ -190,6 +191,30 @@ export default function CashflowAccountsPage() {
             )}
           </tbody>
         </table>
+      </div>
+      {/* Mobile cards */}
+      <div className="sm:hidden space-y-3">
+        {accounts.map((a) => {
+          const bal = balances[a.name] ?? 0;
+          return (
+            <div key={a.id} className="card p-4 space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{a.name}</div>
+                  <div className="text-xs text-zinc-500">{ACCOUNT_TYPES[a.type]}</div>
+                </div>
+                <div className={`text-sm font-semibold font-mono shrink-0 ${bal >= 0 ? "text-zinc-900 dark:text-zinc-50" : "text-rose-600 dark:text-rose-400"}`}>{fmtRupiah(bal)}</div>
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button className="btn-secondary !py-1.5 flex-1 text-xs" onClick={() => startEdit(a)}>Edit</button>
+                <button className="btn-danger !py-1.5 flex-1 text-xs" onClick={() => remove(a)}>Hapus</button>
+              </div>
+            </div>
+          );
+        })}
+        {accounts.length === 0 && (
+          <div className="card p-8 text-center text-zinc-400 text-sm">Belum ada akun.</div>
+        )}
       </div>
 
       {editing && (

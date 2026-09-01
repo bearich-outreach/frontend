@@ -54,25 +54,26 @@ export default function OutreachProspectsPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
             Prospects
           </h1>
           <p className="text-sm text-zinc-500">
             {prospects.length} prospek dalam pipeline.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <a href={`${API_URL}${OUTREACH_API}/prospects/export`} className="btn-secondary">
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <a href={`${API_URL}${OUTREACH_API}/prospects/export`} className="btn-secondary text-xs sm:text-sm">
             Export CSV
           </a>
-          <Link href="/apps/outreach/prospects/new" className="btn-primary">
+          <Link href="/apps/outreach/prospects/new" className="btn-primary text-xs sm:text-sm">
             + Tambah
           </Link>
         </div>
       </div>
 
-      <div className="card overflow-x-auto">
+      {/* Desktop table */}
+      <div className="hidden md:block card overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs text-zinc-500 border-b border-zinc-200 dark:border-zinc-800">
@@ -128,6 +129,33 @@ export default function OutreachProspectsPage() {
             )}
           </tbody>
         </table>
+      </div>
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {prospects.map((p) => (
+          <Link key={p.id} href={`/apps/outreach/prospects/${p.id}`} className="card p-4 block space-y-2 hover:border-brand-300">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-medium text-zinc-900 dark:text-zinc-100 truncate">{p.name}</div>
+                <div className="text-xs text-zinc-500 truncate">{p.company || "—"} · <span className="capitalize">{p.channel}</span></div>
+              </div>
+              <StatusBadge status={p.status} />
+            </div>
+            <div className="flex items-center justify-between text-xs text-zinc-500">
+              <span>Step {p.followUpStep}/{seqLen}</span>
+              <span>{fmtDate(p.nextFollowUpAt)}</span>
+            </div>
+          </Link>
+        ))}
+        {prospects.length === 0 && (
+          <div className="card p-8 text-center text-zinc-400 text-sm">
+            Belum ada prospek. Mulai dari{" "}
+            <Link href="/apps/outreach/prospects/new" className="text-brand-600 underline">
+              tambah prospek
+            </Link>
+            .
+          </div>
+        )}
       </div>
     </div>
   );

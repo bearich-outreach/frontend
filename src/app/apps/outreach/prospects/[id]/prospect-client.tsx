@@ -139,32 +139,32 @@ export function ProspectClient({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold text-zinc-900">{p.name}</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50 break-words">{p.name}</h1>
             <StatusBadge status={p.status} />
           </div>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-500 break-words">
             {p.company ? `${p.company} · ` : ""}
             {p.segment ? `${p.segment} · ` : ""}
             <span className="capitalize">{p.channel}</span>
             {p.contact ? ` · ${p.contact}` : ""}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary" onClick={() => setEditing(!editing)}>
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <button className="btn-secondary text-sm" onClick={() => setEditing(!editing)}>
             Edit
           </button>
-          <button className="btn-danger" onClick={remove}>
+          <button className="btn-danger text-sm" onClick={remove}>
             Hapus
           </button>
         </div>
       </div>
 
       {editing && (
-        <form onSubmit={saveEdit} className="card p-5 space-y-3">
+        <form onSubmit={saveEdit} className="card p-4 sm:p-5 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Nama</label>
@@ -187,25 +187,25 @@ export function ProspectClient({
               <label className="label">Kontak</label>
               <input className="input" value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-1 sm:col-span-2">
               <label className="label">Segmen</label>
               <input className="input" value={form.segment} onChange={(e) => setForm({ ...form, segment: e.target.value })} />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-1 sm:col-span-2">
               <label className="label">Catatan</label>
               <textarea className="input" rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
             </div>
           </div>
           <div className="flex gap-2">
-            <button className="btn-primary" disabled={busy}>Simpan</button>
-            <button className="btn-secondary" onClick={() => setEditing(false)}>Batal</button>
+            <button className="btn-primary text-sm" disabled={busy}>Simpan</button>
+            <button type="button" className="btn-secondary text-sm" onClick={() => setEditing(false)}>Batal</button>
           </div>
         </form>
       )}
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <div className="card p-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="card p-4 sm:p-5">
             <h2 className="font-semibold text-zinc-900 mb-3">
               Generate Pesan (step {step + 1}/{sequence.length})
             </h2>
@@ -221,17 +221,17 @@ export function ProspectClient({
                 </select>
               </div>
               {message && (
-                <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 text-sm whitespace-pre-wrap dark:bg-zinc-800/60 dark:border-zinc-700 dark:text-zinc-100">
+                <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 text-sm whitespace-pre-wrap break-words dark:bg-zinc-800/60 dark:border-zinc-700 dark:text-zinc-100">
                   {message}
                 </div>
               )}
               <div className="flex flex-wrap gap-2">
-                <button className="btn-primary" disabled={busy}>
+                <button className="btn-primary text-sm" disabled={busy}>
                   {usedAI ? "Regenerate (AI)" : "Generate Pesan"}
                 </button>
                 {message && <CopyButton text={message} />}
                 {message && (
-                  <button className="btn-secondary" onClick={markSent} disabled={busy}>
+                  <button className="btn-secondary text-sm" onClick={markSent} disabled={busy}>
                     Tandai Terkirim
                   </button>
                 )}
@@ -244,24 +244,24 @@ export function ProspectClient({
             </form>
           </div>
 
-          <div className="card p-5">
-            <h2 className="font-semibold text-zinc-900 mb-3">Pipeline</h2>
+          <div className="card p-4 sm:p-5">
+            <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">Pipeline</h2>
             <div className="flex flex-wrap gap-2 mb-3">
               {STATUS_ACTIONS.map((a) => (
-                <button key={a.status} className="btn-secondary" onClick={() => setStatus(a.status)} disabled={busy}>
+                <button key={a.status} className="btn-secondary text-xs sm:text-sm" onClick={() => setStatus(a.status)} disabled={busy}>
                   {a.label}
                 </button>
               ))}
             </div>
             {p.status === "closed" && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
-                  className="input"
+                  className="input flex-1"
                   placeholder="Nilai deal (Rp)"
                   value={value}
                   onChange={(e) => setValue(e.target.value)}
                 />
-                <button className="btn-secondary" onClick={() => setStatus("closed")} disabled={busy}>
+                <button className="btn-secondary shrink-0 text-sm" onClick={() => setStatus("closed")} disabled={busy}>
                   Update Nilai
                 </button>
               </div>
@@ -275,17 +275,17 @@ export function ProspectClient({
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="card p-5">
-            <h2 className="font-semibold text-zinc-900 mb-3">Aktivitas</h2>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="card p-4 sm:p-5">
+            <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">Aktivitas</h2>
             <form onSubmit={addNote} className="flex gap-2 mb-3">
               <input
-                className="input"
+                className="input flex-1 min-w-0"
                 placeholder="Tambah catatan..."
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
               />
-              <button className="btn-secondary">Tambah</button>
+              <button className="btn-secondary shrink-0 text-sm">Tambah</button>
             </form>
             <ul className="space-y-2 text-sm max-h-80 overflow-y-auto">
               {acts.map((a) => (

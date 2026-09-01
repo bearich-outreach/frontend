@@ -115,14 +115,14 @@ export default function OutreachQueuePage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Outreach Queue</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Outreach Queue</h1>
           <p className="text-sm text-zinc-500">
             {rows.length} prospek yang perlu dihubungi hari ini. Kerjakan satu per
             satu dengan konsisten — hasilnya pasti secara statistik.
           </p>
         </div>
-        <button className="btn-secondary" onClick={load}>
+        <button className="btn-secondary shrink-0 text-sm" onClick={load}>
           Refresh
         </button>
       </div>
@@ -134,35 +134,35 @@ export default function OutreachQueuePage() {
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {rows.map((row, i) => {
           const p = row.prospect;
           return (
-            <div key={p.id} className="card p-5">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Link href={`/apps/outreach/prospects/${p.id}`} className="font-semibold text-zinc-900 hover:underline">
+            <div key={p.id} className="card p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                <div className="flex flex-wrap items-center gap-2 min-w-0">
+                  <Link href={`/apps/outreach/prospects/${p.id}`} className="font-semibold text-zinc-900 dark:text-zinc-50 hover:underline break-words">
                     {p.name}
                   </Link>
-                  {p.company && <span className="text-zinc-500">{p.company}</span>}
+                  {p.company && <span className="text-zinc-500 text-sm truncate">{p.company}</span>}
                   <StatusBadge status={p.status} />
                 </div>
-                <div className="text-xs text-zinc-400">
+                <div className="text-xs text-zinc-400 shrink-0">
                   follow-up {Math.min(p.followUpStep, seqTotal - 1) + 1}/{seqTotal} · jatuh tempo{" "}
                   {fmtDate(p.nextFollowUpAt)}
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-2 mb-3">
-                <button className="btn-primary" onClick={() => generate(row, i)} disabled={row.loading}>
+                <button className="btn-primary text-sm" onClick={() => generate(row, i)} disabled={row.loading}>
                   {row.loading ? "Membuat..." : row.message ? "Regenerate" : "Generate Pesan"}
                 </button>
                 {row.message && (
                   <>
-                    <button className="btn-secondary" onClick={() => copy(row.message)}>
+                    <button className="btn-secondary text-sm" onClick={() => copy(row.message)}>
                       Copy
                     </button>
-                    <button className="btn-secondary text-emerald-700" onClick={() => markSent(i)}>
+                    <button className="btn-secondary text-emerald-700 text-sm" onClick={() => markSent(i)}>
                       Tandai Terkirim
                     </button>
                   </>
@@ -170,7 +170,7 @@ export default function OutreachQueuePage() {
               </div>
 
               {row.message ? (
-                <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 text-sm whitespace-pre-wrap dark:bg-zinc-800/60 dark:border-zinc-700 dark:text-zinc-100">
+                <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 text-sm whitespace-pre-wrap break-words dark:bg-zinc-800/60 dark:border-zinc-700 dark:text-zinc-100">
                   {row.message}
                 </div>
               ) : (

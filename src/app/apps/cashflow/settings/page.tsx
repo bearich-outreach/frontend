@@ -93,9 +93,9 @@ export default function CashflowSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Target</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Target</h1>
         <p className="text-sm text-zinc-500">
           Atur target tabungan dari total saldo Anda (seluruh waktu).
         </p>
@@ -112,7 +112,7 @@ export default function CashflowSettingsPage() {
         </div>
       )}
 
-      <div className="card p-6">
+      <div className="card p-4 sm:p-6">
         <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-4">
             <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">

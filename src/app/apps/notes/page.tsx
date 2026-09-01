@@ -49,16 +49,16 @@ export default function NotesListPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Catatan</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Catatan</h1>
           <p className="text-sm text-zinc-500">{notes.length} catatan.</p>
         </div>
-        <Link href="/apps/notes/new" className="btn-primary">+ Catatan Baru</Link>
+        <Link href="/apps/notes/new" className="btn-primary shrink-0 text-sm">+ Catatan Baru</Link>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
         <input
-          className="input max-w-xs"
+          className="input w-full sm:max-w-xs sm:w-auto"
           placeholder="Cari catatan..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -69,7 +69,7 @@ export default function NotesListPage() {
               <button
                 key={t}
                 onClick={() => toggleTag(t)}
-                className={`text-xs rounded-full border px-2.5 py-0.5 font-medium transition-colors ${
+                className={`text-xs rounded-full border px-2.5 py-1 font-medium transition-colors ${
                   tag === t
                     ? "border-brand-500 bg-brand-500 text-white"
                     : "border-zinc-300 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
@@ -82,7 +82,7 @@ export default function NotesListPage() {
         )}
         {(search || tag) && (
           <button
-            className="btn-secondary !py-1"
+            className="btn-secondary !py-1 shrink-0"
             onClick={() => {
               setSearch("");
               setTag("");
@@ -117,12 +117,12 @@ export default function NotesListPage() {
             .
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {notes.map((n) => (
               <Link
                 key={n.id}
                 href={`/apps/notes/${n.id}`}
-                className="card p-5 group hover:border-brand-400 dark:hover:border-brand-500/50 hover:shadow-md transition-all"
+                className="card p-4 sm:p-5 group hover:border-brand-400 dark:hover:border-brand-500/50 hover:shadow-md transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-semibold text-zinc-900 dark:text-zinc-50 truncate">

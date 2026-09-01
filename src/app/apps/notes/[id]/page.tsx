@@ -102,20 +102,20 @@ export default function NoteDetailPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-4 sm:space-y-6 max-w-3xl">
       {editing ? (
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">Edit Catatan</h1>
-            <button className="btn-secondary !py-1" onClick={() => setEditing(false)}>Batal</button>
+        <div className="card p-4 sm:p-6">
+          <div className="flex items-center justify-between gap-2 mb-4">
+            <h1 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">Edit Catatan</h1>
+            <button className="btn-secondary !py-1 shrink-0" onClick={() => setEditing(false)}>Batal</button>
           </div>
           <NoteForm initial={note} onSubmit={save} submitLabel="Simpan Perubahan" busy={busy} />
         </div>
       ) : (
         <>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50 break-words">
                 {note.pinned && <span className="text-amber-500 mr-1">📌</span>}
                 {note.title}
               </h1>
@@ -126,16 +126,16 @@ export default function NoteDetailPage() {
                 ))}
               </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-              <button className="btn-secondary !py-1" onClick={togglePin} disabled={busy}>
+            <div className="flex gap-2 shrink-0 flex-wrap">
+              <button className="btn-secondary !py-1.5 text-xs sm:text-sm" onClick={togglePin} disabled={busy}>
                 {note.pinned ? "Lepas pin" : "Pin"}
               </button>
-              <button className="btn-secondary !py-1" onClick={() => setEditing(true)}>Edit</button>
-              <button className="btn-danger !py-1" onClick={remove}>Hapus</button>
+              <button className="btn-secondary !py-1.5 text-xs sm:text-sm" onClick={() => setEditing(true)}>Edit</button>
+              <button className="btn-danger !py-1.5 text-xs sm:text-sm" onClick={remove}>Hapus</button>
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className="card p-4 sm:p-6">
             {note.content ? (
               <div className="whitespace-pre-wrap text-zinc-800 dark:text-zinc-100 leading-relaxed">
                 {note.content}

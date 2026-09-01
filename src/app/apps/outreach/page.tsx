@@ -66,9 +66,9 @@ export default function OutreachDashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Dashboard
         </h1>
         <p className="text-sm text-zinc-500">
@@ -76,7 +76,7 @@ export default function OutreachDashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <StatCard label="Total Prospek" value={m?.total ?? 0} />
         <StatCard label="Butuh Outreach" value={m?.due ?? 0} sub="tindakan hari ini" />
         <StatCard label="Reply Rate" value={`${m?.replyRate ?? 0}%`} sub="replied / total" />
@@ -87,14 +87,14 @@ export default function OutreachDashboardPage() {
         />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-4">
         {STATUS_ORDER.map((s) => (
           <StatCard key={s} label={STATUS_LABELS[s]} value={m?.byStatus[s] ?? 0} />
         ))}
       </div>
 
-      <div className="card p-4">
-        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
+      <div className="card p-4 sm:p-5">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">
           Antrian Tindakan Hari Ini
         </h2>
         {due.length === 0 ? (
@@ -104,16 +104,16 @@ export default function OutreachDashboardPage() {
         ) : (
           <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
             {due.slice(0, 8).map((p) => (
-              <li key={p.id} className="py-2 flex items-center justify-between">
-                <div>
-                  <span className="font-medium text-zinc-800 dark:text-zinc-100">
+              <li key={p.id} className="py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                <div className="min-w-0">
+                  <span className="font-medium text-zinc-800 dark:text-zinc-100 break-words">
                     {p.name}
                   </span>
                   {p.company && (
-                    <span className="text-zinc-500"> · {p.company}</span>
+                    <span className="text-zinc-500 break-words"> · {p.company}</span>
                   )}
                 </div>
-                <div className="text-xs text-zinc-400">
+                <div className="text-xs text-zinc-400 shrink-0">
                   follow-up {p.followUpStep + 1} · jatuh tempo{" "}
                   {fmtDate(p.nextFollowUpAt)}
                 </div>
@@ -121,7 +121,7 @@ export default function OutreachDashboardPage() {
             ))}
           </ul>
         )}
-        <Link href="/apps/outreach/queue" className="btn-primary mt-3 inline-flex">
+        <Link href="/apps/outreach/queue" className="btn-primary mt-3 inline-flex w-full sm:w-auto justify-center">
           Buka Outreach Queue
         </Link>
       </div>

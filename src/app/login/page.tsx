@@ -39,23 +39,23 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center px-4 bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-[100dvh] flex items-center justify-center px-4 py-6 bg-zinc-50 dark:bg-zinc-950">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
+        <div className="mb-6 sm:mb-8 text-center">
           <div className="inline-flex items-center justify-center size-12 rounded-xl bg-brand-600 text-white mb-4 shadow-sm">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-6" aria-hidden="true">
               <path d="M12 3v3m0 0a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4m0-12a4 4 0 0 0-4 4v4a4 4 0 0 0 4 4m0 0v3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
             Bearich Hub
           </h1>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400 px-2">
             Masuk ke Bearich Hub untuk membuka aplikasi Anda.
           </p>
         </div>
 
-        <form onSubmit={submit} className="card p-6 space-y-4">
+        <form onSubmit={submit} className="card p-5 sm:p-6 space-y-4">
           <div className="space-y-1.5">
             <label htmlFor="username" className="label">Username</label>
             <input

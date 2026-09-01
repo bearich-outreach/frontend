@@ -100,7 +100,7 @@ export function TaskForm({
         </p>
       )}
 
-      <button className="btn-primary" disabled={busy}>
+      <button className="btn-primary w-full sm:w-auto" disabled={busy}>
         {busy ? "Menyimpan..." : submitLabel}
       </button>
     </form>

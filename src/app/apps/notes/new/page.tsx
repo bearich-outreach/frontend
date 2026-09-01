@@ -31,13 +31,13 @@ export default function NewNotePage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Catatan Baru</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Catatan Baru</h1>
         <p className="text-sm text-zinc-500">Tulis ide, catatan, atau dokumentasi.</p>
       </div>
 
-      <div className="card p-6">
+      <div className="card p-4 sm:p-6">
         <NoteForm onSubmit={submit} submitLabel="Simpan Catatan" busy={busy} />
       </div>
     </div>

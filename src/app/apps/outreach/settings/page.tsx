@@ -90,15 +90,15 @@ export default function SettingsPage() {
   if (!s) return <p className="text-zinc-500">Memuat...</p>;
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Settings</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Settings</h1>
           <p className="text-sm text-zinc-500">
             Profil bisnis, template pesan, dan konfigurasi AI.
           </p>
         </div>
-        <button className="btn-primary" onClick={save} disabled={busy}>
+        <button className="btn-primary shrink-0 text-sm" onClick={save} disabled={busy}>
           Simpan
         </button>
       </div>
@@ -109,8 +109,8 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="card p-5 space-y-3">
-        <h2 className="font-semibold text-zinc-900">Profil Bisnis</h2>
+      <div className="card p-4 sm:p-5 space-y-3">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">Profil Bisnis</h2>
         <div>
           <label className="label">Nama bisnis / brand</label>
           <input
@@ -148,8 +148,8 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="card p-5 space-y-3">
-        <h2 className="font-semibold text-zinc-900">AI Message Generator</h2>
+      <div className="card p-4 sm:p-5 space-y-3">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">AI Message Generator</h2>
         <p className="text-xs text-zinc-500">
           Tanpa API key, sistem memakai template fallback (berfungsi penuh).
           Aktifkan DeepSeek untuk pesan yang lebih personal otomatis.
@@ -197,8 +197,8 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="card p-5 space-y-3">
-        <h2 className="font-semibold text-zinc-900">
+      <div className="card p-4 sm:p-5 space-y-3">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
           Sequence Follow-up
         </h2>
         <p className="text-xs text-zinc-500">

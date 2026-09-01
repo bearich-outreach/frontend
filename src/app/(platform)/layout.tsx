@@ -46,31 +46,31 @@ export default function PlatformLayout({
   return (
     <div className="min-h-[100dvh] bg-zinc-50 dark:bg-zinc-950">
       <header className="sticky top-0 z-40 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center justify-center size-8 rounded-lg bg-brand-500 text-brand-950 font-bold">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <span className="inline-flex items-center justify-center size-8 rounded-lg bg-brand-500 text-brand-950 font-bold shrink-0">
               B
             </span>
-            <span className="text-base font-semibold text-zinc-900 dark:text-white">
+            <span className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-white truncate">
               Bearich Hub
             </span>
-            <span className="hidden sm:inline-flex text-xs font-medium text-zinc-400 border border-zinc-200 dark:border-zinc-700 rounded-full px-2 py-0.5">
+            <span className="hidden sm:inline-flex text-xs font-medium text-zinc-400 border border-zinc-200 dark:border-zinc-700 rounded-full px-2 py-0.5 shrink-0">
               Hub
             </span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <ThemeToggle compact />
             <button
               onClick={logout}
               disabled={busy}
-              className="btn-secondary !py-1.5"
+              className="btn-secondary !py-1 sm:!py-1.5 text-xs sm:text-sm px-2.5 sm:px-3"
             >
               {busy ? "Keluar..." : "Keluar"}
             </button>
           </div>
         </div>
       </header>
-      <main className="p-4 md:p-6 max-w-6xl mx-auto w-full">{children}</main>
+      <main className="p-3 sm:p-4 md:p-6 max-w-6xl mx-auto w-full min-w-0">{children}</main>
     </div>
   );
 }

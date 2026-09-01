@@ -85,28 +85,28 @@ export default function CashflowDashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 sm:gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
             Dashboard
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-xs sm:text-sm text-zinc-500 break-words">
             Rekap uang masuk & keluar per akun
             <span className="ml-1 font-medium text-zinc-700 dark:text-zinc-300">
               · {dateLabel}
             </span>
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 p-1">
+        <div className="flex flex-col gap-2 w-full lg:w-auto">
+          <div className="flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-800 p-1 overflow-x-auto scrollbar-none w-full lg:w-auto">
             <button
               onClick={() => {
                 const v = presetDate(0);
                 setStartDate(v);
                 setEndDate(v);
               }}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+              className={`shrink-0 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
                 startDate && endDate && startDate === endDate && startDate === presetDate(0)
                   ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
                   : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -120,7 +120,7 @@ export default function CashflowDashboardPage() {
                 setStartDate(v);
                 setEndDate(v);
               }}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+              className={`shrink-0 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
                 startDate && endDate && startDate === endDate && startDate === presetDate(-1)
                   ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
                   : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -134,7 +134,7 @@ export default function CashflowDashboardPage() {
                 setStartDate(start);
                 setEndDate(end);
               }}
-              className="rounded-md px-2.5 py-1 text-xs font-medium transition-colors text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              className="shrink-0 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             >
               Bulan ini
             </button>
@@ -143,7 +143,7 @@ export default function CashflowDashboardPage() {
                 setStartDate("");
                 setEndDate("");
               }}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+              className={`shrink-0 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
                 !startDate && !endDate
                   ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
                   : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -152,19 +152,21 @@ export default function CashflowDashboardPage() {
               Semua waktu
             </button>
           </div>
-          <input
-            type="date"
-            className="input !w-auto"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <span className="text-xs text-zinc-400">s/d</span>
-          <input
-            type="date"
-            className="input !w-auto"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
+          <div className="flex items-center gap-2 w-full">
+            <input
+              type="date"
+              className="input flex-1 min-w-0 text-sm"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <span className="text-xs text-zinc-400 shrink-0">s/d</span>
+            <input
+              type="date"
+              className="input flex-1 min-w-0 text-sm"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -189,7 +191,7 @@ export default function CashflowDashboardPage() {
       ) : (
         !error && (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               <StatCard label="Uang Masuk" value={fmtRupiah(summary?.totalIn)} sub={`${summary?.countIn ?? 0} transaksi`} />
               <StatCard label="Uang Keluar" value={fmtRupiah(summary?.totalOut)} sub={`${summary?.countOut ?? 0} transaksi`} />
               <StatCard
@@ -249,17 +251,17 @@ export default function CashflowDashboardPage() {
               </div>
             )}
 
-            <div className="card p-5">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
+            <div className="card p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
                   Saldo per Akun
                   <span className="ml-2 text-xs font-normal text-zinc-500">· {dateLabel}</span>
                 </h2>
-                <Link href="/apps/cashflow/accounts" className="text-sm text-brand-600 hover:underline">
+                <Link href="/apps/cashflow/accounts" className="text-sm text-brand-600 hover:underline shrink-0">
                   Kelola akun
                 </Link>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {accounts.map((a) => {
                   const bal = balanceByAccount.get(a.name) ?? 0;
                   return (
@@ -278,9 +280,9 @@ export default function CashflowDashboardPage() {
               {(startDate || endDate) && <p className="mt-3 text-xs text-zinc-400">Menampilkan saldo bersih per akun untuk {dateLabel}.</p>}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="card p-5">
-                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="card p-4 sm:p-5">
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">
                   Rincian per Kategori
                   <span className="ml-2 text-xs font-normal text-zinc-500">· {dateLabel}</span>
                 </h2>
@@ -300,8 +302,8 @@ export default function CashflowDashboardPage() {
                 )}
               </div>
 
-              <div className="card p-5">
-                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
+              <div className="card p-4 sm:p-5">
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">
                   Transaksi Terbaru
                   <span className="ml-2 text-xs font-normal text-zinc-500">· {dateLabel}</span>
                 </h2>

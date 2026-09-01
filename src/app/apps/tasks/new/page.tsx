@@ -33,13 +33,13 @@ export default function NewTaskPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Tugas Baru</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Tugas Baru</h1>
         <p className="text-sm text-zinc-500">Tambah tugas dengan prioritas dan tenggat.</p>
       </div>
 
-      <div className="card p-6">
+      <div className="card p-4 sm:p-6">
         <TaskForm onSubmit={submit} submitLabel="Simpan Tugas" busy={busy} />
       </div>
     </div>

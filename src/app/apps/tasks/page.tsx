@@ -63,31 +63,31 @@ export default function TasksDashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Dashboard</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Dashboard</h1>
           <p className="text-sm text-zinc-500">Ringkasan tugas harian.</p>
         </div>
-        <Link href="/apps/tasks/list" className="btn-primary">Buka Daftar Tugas</Link>
+        <Link href="/apps/tasks/list" className="btn-primary shrink-0 text-sm">Buka Daftar Tugas</Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <StatCard label="Total" value={stats?.total ?? 0} />
         <StatCard label="To Do" value={stats?.todo ?? 0} />
         <StatCard label="In Progress" value={stats?.inProgress ?? 0} />
         <StatCard label="Selesai" value={stats?.done ?? 0} />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <StatCard label="Terlambat" value={stats?.overdue ?? 0} sub="tugas lewat tenggat" />
         <StatCard label="Jatuh tempo hari ini" value={stats?.dueToday ?? 0} />
         <StatCard label="Selesai hari ini" value={stats?.doneToday ?? 0} />
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="card p-5">
-          <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">Perlu perhatian (terlambat)</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="card p-4 sm:p-5">
+          <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">Perlu perhatian (terlambat)</h2>
           {overdue.length === 0 ? (
             <p className="text-sm text-zinc-500">Tidak ada tugas terlambat.</p>
           ) : (
@@ -102,8 +102,8 @@ export default function TasksDashboardPage() {
           )}
         </div>
 
-        <div className="card p-5">
-          <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">Tugas terbaru</h2>
+        <div className="card p-4 sm:p-5">
+          <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">Tugas terbaru</h2>
           {recent.length === 0 ? (
             <p className="text-sm text-zinc-500">Belum ada tugas.</p>
           ) : (

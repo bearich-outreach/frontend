@@ -6,8 +6,21 @@
   color-scheme: light dark;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
 body {
   @apply bg-zinc-50 text-zinc-800 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+  overflow-x: hidden;
+}
+
+/* Prevent iOS zoom on focus: ensure 16px font on inputs at small screens */
+@media (max-width: 640px) {
+  .input {
+    font-size: 16px;
+  }
 }
 
 .card {
@@ -44,4 +57,28 @@ body {
 
 .nav-link-active {
   @apply nav-link text-white bg-zinc-800/70;
+}
+
+/* Utilities for responsive */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Ensure tables and pre wrap on mobile */
+.break-words {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Safe area padding for mobile */
+.safe-pb {
+  padding-bottom: env(safe-area-inset-bottom);
 }

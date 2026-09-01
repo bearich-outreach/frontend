@@ -32,9 +32,9 @@ export default function NewTransactionPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-4 sm:space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
           Catat Transaksi
         </h1>
         <p className="text-sm text-zinc-500">
@@ -42,7 +42,7 @@ export default function NewTransactionPage() {
         </p>
       </div>
 
-      <div className="card p-6">
+      <div className="card p-4 sm:p-6">
         <CashflowTransactionForm onSubmit={submit} submitLabel="Simpan Transaksi" busy={busy} />
       </div>
     </div>

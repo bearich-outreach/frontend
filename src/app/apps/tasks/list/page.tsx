@@ -88,27 +88,27 @@ export default function TasksListPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Tugas</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Tugas</h1>
           <p className="text-sm text-zinc-500">{rows.length} tugas.</p>
         </div>
-        <Link href="/apps/tasks/new" className="btn-primary">+ Tugas Baru</Link>
+        <Link href="/apps/tasks/new" className="btn-primary shrink-0 text-sm">+ Tugas Baru</Link>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
         <input
           type="date"
-          className="input !w-auto"
+          className="input"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
-        <select className="input !w-auto" value={status} onChange={(e) => setStatus(e.target.value)}>
+        <select className="input" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">Semua status</option>
           <option value="todo">To Do</option>
           <option value="in_progress">In Progress</option>
           <option value="done">Selesai</option>
         </select>
-        <select className="input !w-auto" value={priority} onChange={(e) => setPriority(e.target.value)}>
+        <select className="input" value={priority} onChange={(e) => setPriority(e.target.value)}>
           <option value="">Semua prioritas</option>
           <option value="low">Rendah</option>
           <option value="medium">Sedang</option>
@@ -116,7 +116,7 @@ export default function TasksListPage() {
         </select>
         {(dueDate || status || priority) && (
           <button
-            className="btn-secondary"
+            className="btn-secondary w-full"
             onClick={() => {
               setDueDate("");
               setStatus("");
@@ -141,17 +141,17 @@ export default function TasksListPage() {
         !error && (
           <div className="grid gap-3">
             {rows.map((t) => (
-              <div key={t.id} className="card p-4 flex flex-wrap gap-3">
-                <div className="flex-1 min-w-52">
+              <div key={t.id} className="card p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
+                <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+                    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] sm:text-xs font-medium ${
                       t.status === "done"
                         ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
                         : t.status === "in_progress"
                         ? "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300"
                         : "border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
                     }`}>{TASK_STATUS_LABELS[t.status]}</span>
-                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+                    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] sm:text-xs font-medium ${
                       t.priority === "high"
                         ? "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300"
                         : t.priority === "low"
@@ -159,16 +159,16 @@ export default function TasksListPage() {
                         : "border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300"
                     }`}>{TASK_PRIORITY_LABELS[t.priority]}</span>
                   </div>
-                  <div className={`mt-1 text-sm font-medium ${t.status === "done" ? "line-through text-zinc-400" : "text-zinc-800 dark:text-zinc-100"}`}>{t.title}</div>
-                  {t.description && <div className="text-xs text-zinc-500 mt-1 line-clamp-2">{t.description}</div>}
+                  <div className={`mt-1 text-sm font-medium break-words ${t.status === "done" ? "line-through text-zinc-400" : "text-zinc-800 dark:text-zinc-100"}`}>{t.title}</div>
+                  {t.description && <div className="text-xs text-zinc-500 mt-1 line-clamp-2 break-words">{t.description}</div>}
                   <div className="text-xs text-zinc-400 mt-1">tenggat {fmtDate(t.dueDate)}</div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 self-start">
-                  <button className="btn-secondary !py-1" onClick={() => toggleDone(t)}>
+                <div className="flex flex-row sm:flex-col lg:flex-row flex-wrap items-center gap-2 shrink-0 sm:self-start">
+                  <button className="btn-secondary !py-1.5 text-xs flex-1 sm:flex-none" onClick={() => toggleDone(t)}>
                     {t.status === "done" ? "Batalkan" : "Selesai"}
                   </button>
-                  <button className="btn-secondary !py-1" onClick={() => setEditingId(editingId === t.id ? null : t.id)}>Edit</button>
-                  <button className="btn-danger !py-1" onClick={() => remove(t)}>Hapus</button>
+                  <button className="btn-secondary !py-1.5 text-xs flex-1 sm:flex-none" onClick={() => setEditingId(editingId === t.id ? null : t.id)}>Edit</button>
+                  <button className="btn-danger !py-1.5 text-xs flex-1 sm:flex-none" onClick={() => remove(t)}>Hapus</button>
                 </div>
               </div>
             ))}
