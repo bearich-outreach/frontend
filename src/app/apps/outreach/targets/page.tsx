@@ -27,6 +27,14 @@ export default function TargetsPage() {
     await load();
     setBusy(false);
   }
+  async function retryFailed() {
+    setBusy(true);
+    const res = await apiFetch(`${OUTREACH_API}/admin/targets/retry-failed`, { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) alert((data as { error?: string }).error || "Gagal retry");
+    await load();
+    setBusy(false);
+  }
   async function reset() {
     if (!confirm("Reset total? Raw + Leads + antrian akan dikosongkan dan semua target kembali ke PENDING.")) return;
     setBusy(true);
@@ -44,6 +52,7 @@ export default function TargetsPage() {
         <div className="flex gap-2">
           <button className="btn-secondary text-sm" onClick={seed} disabled={busy}>Seed 10.280</button>
           <button className="btn-primary text-sm" onClick={scrape} disabled={busy}>Scrape Next</button>
+          <button className="btn-secondary text-sm" onClick={retryFailed} disabled={busy}>Retry FAILED</button>
           <button className="btn-secondary text-sm !text-rose-600" onClick={reset} disabled={busy}>Reset</button>
         </div>
       </div>
