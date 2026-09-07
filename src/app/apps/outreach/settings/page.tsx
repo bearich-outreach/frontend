@@ -153,6 +153,9 @@ export default function SettingsPage() {
         <p className="text-xs text-zinc-500">
           Tanpa API key, sistem memakai template fallback (berfungsi penuh).
           Aktifkan DeepSeek untuk pesan yang lebih personal otomatis.
+          {s.apiKey === "" && s.provider === "deepseek" && (
+            <span className="block mt-1 text-emerald-600">✓ DeepSeek key diatur via .env (DEEPSEEK_API_KEY) — aman, tidak disimpan di DB.</span>
+          )}
         </p>
         <div>
           <label className="label">Provider</label>

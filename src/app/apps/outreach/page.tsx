@@ -10,6 +10,7 @@ interface Metrics {
   targets: { total: number; byStatus: Record<string, number> };
   rawLeads: number;
   dailySent: number;
+  deepseekMode: "deepseek" | "spintax";
 }
 
 export default function OutreachDashboardPage() {
@@ -60,7 +61,7 @@ export default function OutreachDashboardPage() {
     <div className="space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Dashboard Autopilot</h1>
-        <p className="text-sm text-zinc-500">514 kota × 20 kategori = 10.280 target · 10/hari · 09-16 WIB</p>
+        <p className="text-sm text-zinc-500">514 kota × 20 kategori = 10.280 target · 10/hari · 09-16 WIB · {m?.deepseekMode === "deepseek" ? "● DeepSeek aktif" : "○ Spintax"} (toggle di Settings, auto fallback jika kredit habis)</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">

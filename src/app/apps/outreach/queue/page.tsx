@@ -5,7 +5,7 @@ import { QualifiedLead } from "@/lib/types";
 
 export default function OutreachQueuePage() {
   const [leads, setLeads] = useState<QualifiedLead[]>([]);
-  const [status, setStatus] = useState<{ dryRun: boolean; dailySent: number; operational: boolean; wibTime: string } | null>(null);
+  const [status, setStatus] = useState<{ dryRun: boolean; dailySent: number; operational: boolean; wibTime: string; deepseekMode: "deepseek" | "spintax" } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -31,7 +31,7 @@ export default function OutreachQueuePage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold dark:text-zinc-50">Queue Monitor (Autopilot)</h1>
           <p className="text-sm text-zinc-500">
-            {status?.dryRun ? "DRY-RUN aktif (2 hari pertama, tidak kirim WA real)" : "Full auto aktif"} · {status?.dailySent ?? 0}/10 hari ini · {status?.operational ? "Jam operasional 09-16 WIB" : "Di luar jam operasional"} · WIB {status?.wibTime ? new Date(status.wibTime).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) : "-"}
+            {status?.dryRun ? "DRY-RUN aktif (2 hari pertama, tidak kirim WA real)" : "Full auto aktif"} · {status?.dailySent ?? 0}/10 hari ini · {status?.operational ? "Jam operasional 09-16 WIB" : "Di luar jam operasional"} · WIB {status?.wibTime ? new Date(status.wibTime).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) : "-"} · {status?.deepseekMode === "deepseek" ? "● DeepSeek" : "○ Spintax"} (toggle di Settings, auto Spintax jika kredit habis)
           </p>
         </div>
         <button className="btn-secondary text-sm" onClick={load}>Refresh</button>
