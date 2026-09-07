@@ -23,7 +23,7 @@ export default function OutreachProspectsPage() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold dark:text-zinc-50">Leads ({leads.length})</h1>
-          <p className="text-sm text-zinc-500">Skor ≥70 · WA verified · buffer &lt;10 auto-refill</p>
+          <p className="text-sm text-zinc-500">Skor ≥70 · WA aktif terverifikasi · buffer &lt;10 auto-refill</p>
         </div>
         <select className="input w-auto" value={filter} onChange={(e) => setFilter(e.target.value)}>
           <option value="">Semua status</option>
@@ -51,7 +51,7 @@ export default function OutreachProspectsPage() {
                 <td className="px-4 py-3 text-zinc-600">{l.city} · {l.category}</td>
                 <td className="px-4 py-3">{l.score}</td>
                 <td className="px-4 py-3">{l.status}</td>
-                <td className="px-4 py-3">{l.phone628}</td>
+                <td className="px-4 py-3"><span className="inline-flex items-center gap-1">{l.phone628} <span className="text-xs text-emerald-600" title="WA aktif terverifikasi">✓ WA</span></span></td>
               </tr>
             ))}
           </tbody>
