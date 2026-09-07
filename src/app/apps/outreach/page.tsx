@@ -3,39 +3,29 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { StatCard } from "@/components/bits";
-import { fmtDate } from "@/lib/format";
-import { STATUS_LABELS, STATUS_ORDER, Prospect } from "@/lib/types";
 import { OUTREACH_API, apiGet } from "@/lib/api";
 
 interface Metrics {
-  total: number;
-  due: number;
-  replyRate: number;
-  closeRate: number;
-  closed: number;
-  revenue: number;
-  byStatus: Record<string, number>;
+  qualified: { total: number; byStatus: Record<string, number> };
+  targets: { total: number; byStatus: Record<string, number> };
+  rawLeads: number;
+  dailySent: number;
 }
 
 export default function OutreachDashboardPage() {
   const [m, setM] = useState<Metrics | null>(null);
-  const [due, setDue] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.all([
-      apiGet<{ metrics: Metrics }>(`${OUTREACH_API}/stats`),
-      apiGet<{ due: Prospect[] }>(`${OUTREACH_API}/queue`),
-    ])
-      .then(([s, o]) => {
+    apiGet<{ metrics: Metrics }>(`${OUTREACH_API}/stats`)
+      .then((s) => {
         setM(s.metrics);
-        setDue(o.due);
         setLoading(false);
       })
       .catch((e) => {
         if (e instanceof Error && e.message !== "Unauthorized") {
-          setError("Tidak dapat terhubung ke server API. Pastikan backend berjalan, lalu muat ulang.");
+          setError("Tidak dapat terhubung ke server API.");
         }
         setLoading(false);
       });
@@ -44,7 +34,7 @@ export default function OutreachDashboardPage() {
   if (error) {
     return (
       <div className="card p-8 text-center">
-        <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>
+        <p className="text-sm text-rose-600">{error}</p>
         <button className="btn-primary mt-4" onClick={() => window.location.reload()}>
           Muat ulang
         </button>
@@ -65,65 +55,37 @@ export default function OutreachDashboardPage() {
     );
   }
 
+  const q = m?.qualified;
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          Dashboard
-        </h1>
-        <p className="text-sm text-zinc-500">
-          Pipeline & metrik konsistensi outreach Anda.
-        </p>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Dashboard Autopilot</h1>
+        <p className="text-sm text-zinc-500">514 kota × 20 kategori = 10.280 target · 10/hari · 09-16 WIB</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard label="Total Prospek" value={m?.total ?? 0} />
-        <StatCard label="Butuh Outreach" value={m?.due ?? 0} sub="tindakan hari ini" />
-        <StatCard label="Reply Rate" value={`${m?.replyRate ?? 0}%`} sub="replied / total" />
-        <StatCard
-          label="Revenue"
-          value={`Rp ${(m?.revenue ?? 0).toLocaleString("id-ID")}`}
-          sub={`${m?.closed ?? 0} deal`}
-        />
+        <StatCard label="Qualified Leads" value={q?.total ?? 0} sub="New Lead+Contacted+Replied" />
+        <StatCard label="New Lead" value={q?.byStatus["New Lead"] ?? 0} sub="buffer" />
+        <StatCard label="Terkirim Hari Ini" value={m?.dailySent ?? 0} sub="/10 limit" />
+        <StatCard label="Raw Leads" value={m?.rawLeads ?? 0} sub="place_id dedup" />
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-4">
-        {STATUS_ORDER.map((s) => (
-          <StatCard key={s} label={STATUS_LABELS[s]} value={m?.byStatus[s] ?? 0} />
-        ))}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard label="Targets Total" value={m?.targets.total ?? 0} />
+        <StatCard label="PENDING" value={m?.targets.byStatus["PENDING"] ?? 0} />
+        <StatCard label="DONE" value={m?.targets.byStatus["DONE"] ?? 0} />
+        <StatCard label="FAILED" value={m?.targets.byStatus["FAILED"] ?? 0} />
       </div>
 
-      <div className="card p-4 sm:p-5">
-        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3 text-sm sm:text-base">
-          Antrian Tindakan Hari Ini
-        </h2>
-        {due.length === 0 ? (
-          <p className="text-sm text-zinc-500">
-            Tidak ada yang perlu di-outreach. Tambah prospek baru atau isi pipeline.
-          </p>
-        ) : (
-          <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-            {due.slice(0, 8).map((p) => (
-              <li key={p.id} className="py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                <div className="min-w-0">
-                  <span className="font-medium text-zinc-800 dark:text-zinc-100 break-words">
-                    {p.name}
-                  </span>
-                  {p.company && (
-                    <span className="text-zinc-500 break-words"> · {p.company}</span>
-                  )}
-                </div>
-                <div className="text-xs text-zinc-400 shrink-0">
-                  follow-up {p.followUpStep + 1} · jatuh tempo{" "}
-                  {fmtDate(p.nextFollowUpAt)}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-        <Link href="/apps/outreach/queue" className="btn-primary mt-3 inline-flex w-full sm:w-auto justify-center">
-          Buka Outreach Queue
-        </Link>
+      <div className="grid grid-cols-3 gap-3">
+        <StatCard label="Contacted" value={q?.byStatus["Contacted"] ?? 0} />
+        <StatCard label="Replied" value={q?.byStatus["Replied"] ?? 0} />
+        <StatCard label="Reply Rate" value={q?.total ? `${Math.round(((q.byStatus["Replied"] ?? 0)/q.total)*100)}%` : "0%"} />
+      </div>
+
+      <div className="flex gap-2">
+        <Link href="/apps/outreach/queue" className="btn-primary">Buka Queue Monitor</Link>
+        <Link href="/apps/outreach/targets" className="btn-secondary">Lihat Targets</Link>
       </div>
     </div>
   );

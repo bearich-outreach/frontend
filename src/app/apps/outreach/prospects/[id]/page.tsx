@@ -3,63 +3,33 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Activity, Prospect, SequenceStep } from "@/lib/types";
+import { QualifiedLead } from "@/lib/types";
 import { OUTREACH_API, apiGet } from "@/lib/api";
 import { ProspectClient } from "./prospect-client";
 
-export default function ProspectDetailPage() {
+export default function LeadDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? "";
-  const [prospect, setProspect] = useState<Prospect | null>(null);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [sequence, setSequence] = useState<SequenceStep[]>([]);
+  const [lead, setLead] = useState<QualifiedLead | null>(null);
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      apiGet<{ prospect: Prospect }>(`${OUTREACH_API}/prospects/${id}`),
-      apiGet<{ activities: Activity[] }>(`${OUTREACH_API}/prospects/${id}/activities`),
-      apiGet<{ settings: { sequence: SequenceStep[] } }>(`${OUTREACH_API}/settings`),
-    ])
-      .then(([p, a, s]) => {
-        setProspect(p.prospect);
-        setActivities(a.activities);
-        setSequence(s.settings.sequence);
-      })
-      .catch((e) => {
-        if (String((e as Error).message).includes("401") || (e as Error).message === "Unauthorized") {
-          return;
-        }
-        setMissing(true);
-      });
+    apiGet<{ lead: QualifiedLead }>(`${OUTREACH_API}/leads/${id}`)
+      .then((d) => setLead(d.lead))
+      .catch(() => setMissing(true));
   }, [id]);
 
   if (missing) {
     return (
       <div className="card p-10 text-center text-zinc-500">
-        Prospek tidak ditemukan.{" "}
-        <Link href="/apps/outreach/prospects" className="text-brand-600 underline">
-          Kembali ke daftar
-        </Link>
-        .
+        Lead tidak ditemukan. <Link href="/apps/outreach/prospects" className="text-brand-600 underline">Kembali</Link>.
       </div>
     );
   }
 
-  if (!prospect) {
-    return (
-      <div className="space-y-4">
-        <div className="h-8 w-48 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
-        <div className="h-64 rounded-xl bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
-      </div>
-    );
+  if (!lead) {
+    return <div className="h-64 rounded-xl bg-zinc-200 dark:bg-zinc-800 animate-pulse" />;
   }
 
-  return (
-    <ProspectClient
-      prospect={prospect}
-      activities={activities}
-      sequence={sequence}
-    />
-  );
+  return <ProspectClient lead={lead} />;
 }
