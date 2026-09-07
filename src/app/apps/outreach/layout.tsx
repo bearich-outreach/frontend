@@ -18,8 +18,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV = [
   { href: "/apps/outreach", label: "Dashboard", icon: DashboardIcon },
-  { href: "/apps/outreach/queue", label: "Queue (Monitor)", icon: StackIcon },
   { href: "/apps/outreach/prospects", label: "Leads", icon: PersonIcon },
+  { href: "/apps/outreach/queue", label: "Antrian Kirim", icon: StackIcon },
   { href: "/apps/outreach/targets", label: "Targets", icon: StackIcon },
   { href: "/apps/outreach/raw", label: "Raw", icon: PersonIcon },
   { href: "/apps/outreach/settings", label: "Settings", icon: GearIcon },

@@ -60,14 +60,14 @@ export default function OutreachDashboardPage() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Dashboard Autopilot</h1>
-        <p className="text-sm text-zinc-500">514 kota × 20 kategori = 10.280 target · 10/hari · 09-16 WIB · {m?.deepseekMode === "deepseek" ? "● DeepSeek aktif" : "○ Spintax"} (toggle di Settings, auto fallback jika kredit habis)</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Dashboard Outreach</h1>
+        <p className="text-sm text-zinc-500">514 kota × 20 kategori = 10.280 target · kirim WA manual via tombol di Leads</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <StatCard label="Qualified Leads" value={q?.total ?? 0} sub="New Lead+Contacted+Replied" />
-        <StatCard label="New Lead" value={q?.byStatus["New Lead"] ?? 0} sub="buffer" />
-        <StatCard label="Terkirim Hari Ini" value={m?.dailySent ?? 0} sub="/10 limit" />
+        <StatCard label="New Lead" value={q?.byStatus["New Lead"] ?? 0} sub="siap kirim manual" />
+        <StatCard label="Terkirim" value={m?.dailySent ?? 0} sub="via tombol kirim" />
         <StatCard label="Raw Leads" value={m?.rawLeads ?? 0} sub="place_id dedup" />
       </div>
 
@@ -85,7 +85,7 @@ export default function OutreachDashboardPage() {
       </div>
 
       <div className="flex gap-2">
-        <Link href="/apps/outreach/queue" className="btn-primary">Buka Queue Monitor</Link>
+        <Link href="/apps/outreach/prospects" className="btn-primary">Buka Leads</Link>
         <Link href="/apps/outreach/targets" className="btn-secondary">Lihat Targets</Link>
       </div>
     </div>

@@ -11,10 +11,10 @@ export default function RawPage() {
       <h1 className="text-xl font-bold">Raw Leads (dedup place_id)</h1>
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="text-xs text-zinc-500 border-b"><th className="px-3 py-2">Nama</th><th className="px-3 py-2">Kota</th><th className="px-3 py-2">Rating</th><th className="px-3 py-2">Phone</th></tr></thead>
+          <thead><tr className="text-xs text-zinc-500 border-b"><th className="px-3 py-2">Nama Tempat</th><th className="px-3 py-2">Alamat / Maps</th><th className="px-3 py-2">Kota</th><th className="px-3 py-2">Rating</th><th className="px-3 py-2">Phone</th></tr></thead>
           <tbody>
             {leads.map(l => (
-              <tr key={l.id} className="border-b"><td className="px-3 py-2">{l.name}</td><td className="px-3 py-2">{l.city}</td><td className="px-3 py-2">{l.rating} ({l.reviewCount})</td><td className="px-3 py-2">{l.phoneRaw}</td></tr>
+              <tr key={l.id} className="border-b"><td className="px-3 py-2">{l.name}</td><td className="px-3 py-2 text-xs">{l.address || "-"} {l.placeId && <a href={`https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(l.placeId)}`} target="_blank" rel="noreferrer" className="text-sky-600 hover:underline ml-1">Maps</a>}</td><td className="px-3 py-2">{l.city}</td><td className="px-3 py-2">{l.rating} ({l.reviewCount})</td><td className="px-3 py-2">{l.phoneRaw}</td></tr>
             ))}
           </tbody>
         </table>
