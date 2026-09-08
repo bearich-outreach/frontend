@@ -11,6 +11,8 @@ interface Metrics {
   rawLeads: number;
   dailySent: number;
   deepseekMode: "deepseek" | "spintax";
+  provider: string;
+  deepseekKeyConfigured: boolean;
 }
 
 export default function OutreachDashboardPage() {
@@ -61,7 +63,10 @@ export default function OutreachDashboardPage() {
     <div className="space-y-4 sm:space-y-6">
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">Dashboard Outreach</h1>
-        <p className="text-sm text-zinc-500">514 kota × 20 kategori = 10.280 target · kirim WA manual via tombol di Leads</p>
+        <p className="text-sm text-zinc-500">514 kota × 20 kategori = 10.280 target · kirim WA manual via tombol di Leads · {m?.deepseekMode === "deepseek" ? "● DeepSeek aktif" : "○ Spintax"}</p>
+        {m?.provider === "deepseek" && !m?.deepseekKeyConfigured && (
+          <p className="text-xs text-amber-600 mt-1">DeepSeek dipilih tapi tanpa API key — pesan yang dihasilkan фактически Spintax. Tambahkan key di Settings.</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
