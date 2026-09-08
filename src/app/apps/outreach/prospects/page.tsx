@@ -4,24 +4,30 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { QualifiedLead } from "@/lib/types";
 import { OUTREACH_API, apiFetch, apiGet } from "@/lib/api";
+import { Pagination } from "@/components/pagination";
 
 export default function OutreachProspectsPage() {
   const [leads, setLeads] = useState<QualifiedLead[]>([]);
   const [filter, setFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [sendingId, setSendingId] = useState("");
 
-  function load() {
+  function load(p: number, status: string) {
     setLoading(true);
-    apiGet<{ leads: QualifiedLead[] }>(`${OUTREACH_API}/leads${filter ? `?status=${encodeURIComponent(filter)}` : ""}`)
-      .then((d) => { setLeads(d.leads); setLoading(false); })
+    const params = new URLSearchParams();
+    if (status) params.set("status", status);
+    params.set("page", String(p));
+    apiGet<{ leads: QualifiedLead[]; page: number; pageSize: number; total: number }>(`${OUTREACH_API}/leads?${params}`)
+      .then((d) => { setLeads(d.leads); setTotal(d.total); setLoading(false); })
       .catch(() => setLoading(false));
   }
 
   useEffect(() => {
-    load();
+    load(page, filter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [filter, page]);
 
   async function sendWA(l: QualifiedLead) {
     if (!confirm(`Kirim WA ke ${l.name} (${l.phone628})?`)) return;
@@ -34,6 +40,9 @@ export default function OutreachProspectsPage() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         alert((data as { error?: string }).error || "Gagal kirim WA");
+      } else if (filter === "New Lead" || filter === "") {
+        // Lead keluar dari daftar New Lead -> muat ulang halaman aktif
+        load(page, filter);
       } else {
         setLeads((prev) => prev.map((x) => (x.id === l.id ? { ...x, status: "Contacted" as const } : x)));
       }
@@ -49,10 +58,10 @@ export default function OutreachProspectsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold dark:text-zinc-50">Leads ({leads.length})</h1>
+          <h1 className="text-xl sm:text-2xl font-bold dark:text-zinc-50">Leads ({total})</h1>
           <p className="text-sm text-zinc-500">Skor ≥70 · WA aktif terverifikasi · kirim manual via tombol</p>
         </div>
-        <select className="input w-auto" value={filter} onChange={(e) => setFilter(e.target.value)}>
+        <select className="input w-auto" value={filter} onChange={(e) => { setFilter(e.target.value); setPage(1); }}>
           <option value="">Semua status</option>
           <option value="New Lead">New Lead</option>
           <option value="Contacted">Contacted</option>
@@ -115,6 +124,8 @@ export default function OutreachProspectsPage() {
           </div>
         ))}
       </div>
+
+      <Pagination page={page} total={total} onChange={setPage} />
     </div>
   );
 }

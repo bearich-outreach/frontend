@@ -6,6 +6,7 @@ import { CashflowTransactionForm } from "@/components/cashflow-transaction-form"
 import { fmtDate, fmtRupiah } from "@/lib/format";
 import { CashflowAccount, CASHFLOW_CATEGORIES, Transaction } from "@/lib/types";
 import { CASHFLOW_API, apiFetch } from "@/lib/api";
+import { Pagination } from "@/components/pagination";
 
 export default function CashflowTransactionsPage() {
   const [rows, setRows] = useState<Transaction[]>([]);
@@ -15,12 +16,16 @@ export default function CashflowTransactionsPage() {
   const [type, setType] = useState("");
   const [category, setCategory] = useState("");
   const [account, setAccount] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalIn, setTotalIn] = useState(0);
+  const [totalOut, setTotalOut] = useState(0);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (p: number) => {
     setLoading(true);
     setError("");
     try {
@@ -30,15 +35,24 @@ export default function CashflowTransactionsPage() {
       if (type) params.set("type", type);
       if (category) params.set("category", category);
       if (account) params.set("account", account);
+      params.set("page", String(p));
       const q = params.toString();
       const [res, accRes] = await Promise.all([
         apiFetch(`${CASHFLOW_API}/transactions${q ? `?${q}` : ""}`),
         apiFetch(`${CASHFLOW_API}/accounts`),
       ]);
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-      const data = (await res.json()) as { transactions: Transaction[] };
+      const data = (await res.json()) as { transactions: Transaction[]; page: number; pageSize: number; total: number; totalIn: number; totalOut: number };
       const accData = (await accRes.json()) as { accounts: CashflowAccount[] };
+      if (data.transactions.length === 0 && p > 1) {
+        // Halaman kosong (mis. setelah hapus) -> mundur satu halaman
+        setPage(p - 1);
+        return;
+      }
       setRows(data.transactions);
+      setTotalCount(data.total);
+      setTotalIn(data.totalIn);
+      setTotalOut(data.totalOut);
       setAccounts(accData.accounts);
       setLoading(false);
     } catch (e) {
@@ -50,8 +64,17 @@ export default function CashflowTransactionsPage() {
   }, [startDate, endDate, type, category, account]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    load(page);
+  }, [load, page]);
+
+  function resetFilters() {
+    setStartDate("");
+    setEndDate("");
+    setType("");
+    setCategory("");
+    setAccount("");
+    setPage(1);
+  }
 
   async function submitEdit(
     t: Transaction,
@@ -72,7 +95,7 @@ export default function CashflowTransactionsPage() {
     setBusy(false);
     if (res.ok) {
       setEditingId(null);
-      load();
+      load(page);
     } else {
       const d = (await res.json().catch(() => ({}))) as { error?: string };
       alert(d.error || "Gagal menyimpan perubahan.");
@@ -82,10 +105,11 @@ export default function CashflowTransactionsPage() {
   async function remove(t: Transaction) {
     if (!confirm(`Hapus transaksi ${fmtRupiah(t.amount)}?`)) return;
     await apiFetch(`${CASHFLOW_API}/transactions/${t.id}`, { method: "DELETE" });
-    load();
+    load(page);
   }
 
-  const total = rows.reduce((sum, t) => sum + (t.type === "in" ? t.amount : -t.amount), 0);
+  // Total dihitung server dari SELURUH data terfilter (semua halaman).
+  const total = totalIn - totalOut;
   const editing = editingId ? rows.find((r) => r.id === editingId) ?? null : null;
 
   return (
@@ -95,7 +119,7 @@ export default function CashflowTransactionsPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
             Transaksi
           </h1>
-          <p className="text-sm text-zinc-500">{rows.length} transaksi.</p>
+          <p className="text-sm text-zinc-500">{totalCount} transaksi.</p>
         </div>
         <Link href="/apps/cashflow/transactions/new" className="btn-primary shrink-0 text-sm">
           + Catat Transaksi
@@ -109,28 +133,28 @@ export default function CashflowTransactionsPage() {
               type="date"
               className="input flex-1 min-w-0"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
             />
             <span className="text-xs text-zinc-400 shrink-0">s/d</span>
             <input
               type="date"
               className="input flex-1 min-w-0"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
             />
           </div>
-          <select className="input" value={type} onChange={(e) => setType(e.target.value)}>
+          <select className="input" value={type} onChange={(e) => { setType(e.target.value); setPage(1); }}>
             <option value="">Semua tipe</option>
             <option value="in">Uang Masuk</option>
             <option value="out">Uang Keluar</option>
           </select>
-          <select className="input" value={category} onChange={(e) => setCategory(e.target.value)}>
+          <select className="input" value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }}>
             <option value="">Semua kategori</option>
             {CASHFLOW_CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <select className="input" value={account} onChange={(e) => setAccount(e.target.value)}>
+          <select className="input" value={account} onChange={(e) => { setAccount(e.target.value); setPage(1); }}>
             <option value="">Semua akun</option>
             {accounts.map((a) => (
               <option key={a.id} value={a.name}>{a.name}</option>
@@ -139,13 +163,7 @@ export default function CashflowTransactionsPage() {
           {(startDate || endDate || type || category || account) && (
             <button
               className="btn-secondary w-full"
-              onClick={() => {
-                setStartDate("");
-                setEndDate("");
-                setType("");
-                setCategory("");
-                setAccount("");
-              }}
+              onClick={resetFilters}
             >
               Reset
             </button>
@@ -161,7 +179,7 @@ export default function CashflowTransactionsPage() {
       {error && (
         <div className="card p-8 text-center">
           <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>
-          <button className="btn-primary mt-4" onClick={load}>Muat ulang</button>
+          <button className="btn-primary mt-4" onClick={() => load(page)}>Muat ulang</button>
         </div>
       )}
 
@@ -267,6 +285,7 @@ export default function CashflowTransactionsPage() {
                 </div>
               )}
             </div>
+            <Pagination page={page} total={totalCount} onChange={setPage} />
           </>
         )
       )}
