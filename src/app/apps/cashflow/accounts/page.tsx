@@ -9,6 +9,7 @@ import {
   CashflowSummary,
 } from "@/lib/types";
 import { CASHFLOW_API, apiFetch } from "@/lib/api";
+import { Modal } from "@/components/modal";
 
 const TYPE_OPTIONS: AccountType[] = ["tunai", "ewallet", "rekening", "lainnya"];
 
@@ -218,11 +219,7 @@ export default function CashflowAccountsPage() {
       </div>
 
       {editing && (
-        <div className="card p-6 max-w-2xl">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">Edit Akun</h2>
-            <button className="btn-secondary !py-1" onClick={() => setEditing(null)}>Batal</button>
-          </div>
+        <Modal title="Edit Akun" onClose={() => setEditing(null)}>
           <form onSubmit={saveEdit} className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
             <div>
               <label className="label">Nama akun</label>
@@ -238,7 +235,7 @@ export default function CashflowAccountsPage() {
             </div>
             <button className="btn-primary" disabled={busy}>Simpan Perubahan</button>
           </form>
-        </div>
+        </Modal>
       )}
     </div>
   );

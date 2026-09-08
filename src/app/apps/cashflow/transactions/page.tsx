@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { CashflowTransactionForm } from "@/components/cashflow-transaction-form";
+import { Modal } from "@/components/modal";
 import { fmtDate, fmtRupiah } from "@/lib/format";
 import { CashflowAccount, CASHFLOW_CATEGORIES, Transaction } from "@/lib/types";
 import { CASHFLOW_API, apiFetch } from "@/lib/api";
@@ -291,18 +292,14 @@ export default function CashflowTransactionsPage() {
       )}
 
       {editing && (
-        <div className="card p-6 max-w-2xl">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">Edit Transaksi</h2>
-            <button className="btn-secondary !py-1" onClick={() => setEditingId(null)}>Batal</button>
-          </div>
+        <Modal title="Edit Transaksi" onClose={() => setEditingId(null)}>
           <CashflowTransactionForm
             initial={editing}
             onSubmit={(data) => submitEdit(editing, data)}
             submitLabel="Simpan Perubahan"
             busy={busy}
           />
-        </div>
+        </Modal>
       )}
     </div>
   );
