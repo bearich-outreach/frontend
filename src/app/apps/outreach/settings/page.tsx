@@ -2,12 +2,11 @@
 import { OUTREACH_API, apiFetch } from "@/lib/api";
 
 import { useEffect, useState } from "react";
-import { SequenceStep, Settings } from "@/lib/types";
+import { Settings } from "@/lib/types";
 
 export default function SettingsPage() {
   const [s, setS] = useState<Settings | null>(null);
   const [servicesText, setServicesText] = useState("");
-  const [seqText, setSeqText] = useState("");
   const [saved, setSaved] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -18,11 +17,6 @@ export default function SettingsPage() {
       .then((data: { settings: Settings }) => {
         setS(data.settings);
         setServicesText(data.settings.services.join("\n"));
-        setSeqText(
-          data.settings.sequence
-            .map((st) => `[${st.delayDays}] ${st.template}`)
-            .join("\n\n")
-        );
       })
       .catch(() => {
         setError("Tidak dapat terhubung ke server API. Pastikan backend berjalan, lalu muat ulang.");
@@ -31,19 +25,17 @@ export default function SettingsPage() {
 
   async function save() {
     if (!s) return;
-    const parsedSeq = parseSequence(seqText);
-    if (parsedSeq.length === 0) {
-      alert("Sequence follow-up harus memiliki minimal 1 langkah valid dalam format [delayInDays] template.");
-      return;
-    }
     setBusy(true);
     const body: Record<string, unknown> = {
-      ...s,
+      businessName: s.businessName,
       services: servicesText
         .split("\n")
         .map((x) => x.trim())
         .filter(Boolean),
-      sequence: parsedSeq,
+      provider: s.provider,
+      apiKey: s.apiKey,
+      baseUrl: s.baseUrl,
+      model: s.model,
     };
     const res = await apiFetch(`${OUTREACH_API}/settings`, {
       method: "POST",
@@ -57,23 +49,6 @@ export default function SettingsPage() {
       setTimeout(() => setSaved(""), 2000);
     }
     setBusy(false);
-  }
-
-  function parseSequence(text: string): SequenceStep[] {
-    return text
-      .split(/\n\s*\n/)
-      .map((block) => block.trim())
-      .filter(Boolean)
-      .map((block, i) => {
-        const match = block.match(/^\[(\d+)\]\s*([\s\S]*)$/);
-        if (!match) return null;
-        return {
-          id: `step-${i + 1}`,
-          delayDays: Number(match[1]) || 0,
-          template: match[2].trim(),
-        };
-      })
-      .filter((x): x is SequenceStep => x !== null);
   }
 
   if (error) {
@@ -128,24 +103,6 @@ export default function SettingsPage() {
             onChange={(e) => setServicesText(e.target.value)}
           />
         </div>
-        <div>
-          <label className="label">Fokus segmen (opsional, untuk personalisasi)</label>
-          <input
-            className="input"
-            value={s.segmentFocus}
-            onChange={(e) => setS({ ...s, segmentFocus: e.target.value })}
-            placeholder="cth: klinik, restoran, toko online"
-          />
-        </div>
-        <div>
-          <label className="label">Target outreach per minggu</label>
-          <input
-            className="input"
-            type="number"
-            value={s.weeklyTarget}
-            onChange={(e) => setS({ ...s, weeklyTarget: Number(e.target.value) })}
-          />
-        </div>
       </div>
 
       <div className="card p-4 sm:p-5 space-y-3">
@@ -198,25 +155,9 @@ export default function SettingsPage() {
             placeholder="deepseek-chat"
           />
         </div>
-      </div>
-
-      <div className="card p-4 sm:p-5 space-y-3">
-        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
-          Sequence Follow-up
-        </h2>
         <p className="text-xs text-zinc-500">
-          Format per blok (dipisah baris kosong):{" "}
-          <code>[delayDalamHari] template pesan</code>. Placeholder yang
-          tersedia: <code>{"{name}"}</code>, <code>{"{company}"}</code>,{" "}
-          <code>{"{segment}"}</code>, <code>{"{business}"}</code>,{" "}
-          <code>{"{services}"}</code>.
+          Limit harian diatur via env server (DAILY_DEEPSEEK_LIMIT, 0 = tanpa batas). Pemakaian hari ini tampil di Dashboard.
         </p>
-        <textarea
-          className="input font-mono"
-          rows={12}
-          value={seqText}
-          onChange={(e) => setSeqText(e.target.value)}
-        />
       </div>
     </div>
   );
