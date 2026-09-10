@@ -55,14 +55,14 @@ export default function JobsListingsPage() {
           </button>
         </div>
       </div>
-      <div className="text-sm text-zinc-500">Sort skor + terbaru. Label Remote / Perlu Cek dari detail. Non-remote tetap masuk — hapus manual jika salah.</div>
+      <div className="text-sm text-zinc-500">Sort skor + terbaru. Hanya terverifikasi Remote yang masuk — non-remote otomatis ditolak & tercatat di Raw.</div>
       <div className="space-y-2">
         {listings.map((l) => (
           <div key={l.id} className="card p-4 space-y-2">
             <div className="flex flex-wrap justify-between gap-2">
               <div>
                 <div className="font-semibold">{l.title} <span className="text-xs text-zinc-400">· {l.company}</span></div>
-                <div className="text-xs text-zinc-500">{l.source} · Skor {l.score} · {l.status} · {l.postedDate ? new Date(l.postedDate).toLocaleDateString("id-ID") : "tanggal tak diketahui"}</div>
+                <div className="text-xs text-zinc-500">{l.source} · {l.location || "lokasi tak diketahui"} · Skor {l.score} · {l.status} · {l.postedDate ? new Date(l.postedDate).toLocaleDateString("id-ID") : "tanggal tak diketahui"}</div>
               </div>
               <span className={l.remoteLabel === "Remote" ? "text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-700" : "text-xs px-2 py-1 rounded bg-amber-100 text-amber-700"}>
                 {l.remoteLabel}{l.reviewFlag ? " — cek detail" : ""}
