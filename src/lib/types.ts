@@ -248,3 +248,34 @@ export interface RawLead {
   createdAt: string;
   lastSeenAt: string;
 }
+
+export type JobSource = "glints" | "jobstreet";
+export interface JobListing {
+  id: string;
+  source: JobSource;
+  externalId: string;
+  title: string;
+  company: string;
+  location: string;
+  url: string;
+  salaryText?: string;
+  remoteLabel: "Remote" | "Perlu Cek";
+  reviewFlag: boolean;
+  score: number;
+  status: "New" | "Saved" | "Applied" | "Interview" | "Rejected";
+  hidden: boolean;
+  postedDate?: string;
+  firstSeenAt: string;
+  lastSeenAt: string;
+  createdAt: string;
+}
+export interface JobTarget {
+  id: string;
+  keyword: string;
+  source: JobSource;
+  status: "PENDING" | "PROCESSING" | "DONE" | "FAILED";
+  attempts: number;
+  lastError?: string;
+  createdAt: string;
+  updatedAt: string;
+}

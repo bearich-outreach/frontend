@@ -8,6 +8,7 @@ export const OUTREACH_API = "/api/apps/outreach";
 export const CASHFLOW_API = "/api/apps/cashflow";
 export const NOTES_API = "/api/apps/notes";
 export const TASKS_API = "/api/apps/tasks";
+export const JOBS_API = "/api/apps/jobs";
 
 export function redirectToLogin() {
   if (typeof window === "undefined" || window.location.pathname === "/login") return;
