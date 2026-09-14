@@ -23,13 +23,18 @@ export default function JobsTargetsPage() {
   }
   useEffect(() => { load(page, status); }, [page, status]);
 
-  async function post(path: string, confirmMsg?: string) {
-    if (confirmMsg && !confirm(confirmMsg)) return;
+  async function post(path: string) {
     setBusy(true);
-    await apiFetch(`${JOBS_API}${path}`, { method: "POST" });
-    setPage(1);
-    await load(1, status);
-    setBusy(false);
+    try {
+      const res = await apiFetch(`${JOBS_API}${path}`, { method: "POST" });
+      const data = await res.json().catch(() => ({})) as { noEligible?: boolean; recycled?: boolean; keyword?: string; source?: string };
+      if (data?.noEligible) alert("Tidak ada keyword yang siap. Semua DONE masih dalam jeda 24 jam atau FAILED butuh Retry manual.");
+      else if (data?.recycled) alert(`Putar ulang: ${data.keyword} (${data.source}) — keyword lama dicari lagi.`);
+    } finally {
+      setPage(1);
+      await load(1, status);
+      setBusy(false);
+    }
   }
 
   return (
@@ -47,18 +52,17 @@ export default function JobsTargetsPage() {
           <button className="btn-secondary text-sm" onClick={() => post("/admin/seed")} disabled={busy}>Seed 42</button>
           <button className="btn-primary text-sm" onClick={() => post("/admin/scrape-next")} disabled={busy}>Scrape Next</button>
           <button className="btn-secondary text-sm" onClick={() => post("/admin/targets/retry-failed")} disabled={busy}>Retry FAILED</button>
-          <button className="btn-secondary text-sm !text-rose-600" onClick={() => post("/admin/reset", "Reset jobs only? Raw + listings dikosongkan, targets ke PENDING. App lain tidak tersentuh.")} disabled={busy}>Reset Jobs Only</button>
         </div>
       </div>
-      <div className="text-sm text-zinc-500">PENDING {counts["PENDING"] ?? 0} · DONE {counts["DONE"] ?? 0} · FAILED {counts["FAILED"] ?? 0} · 1 keyword/15 mnt, max 10/hari</div>
+      <div className="text-sm text-zinc-500">PENDING {counts["PENDING"] ?? 0} · DONE {counts["DONE"] ?? 0} · FAILED {counts["FAILED"] ?? 0} · Putaran 42 keyword, jeda 24 jam · 1 keyword/15 mnt, max 10/hari</div>
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="text-xs text-zinc-500 border-b"><th className="px-3 py-2 text-left">Keyword</th><th className="px-3 py-2 text-left">Sumber</th><th className="px-3 py-2 text-left">Status</th><th className="px-3 py-2 text-left">Attempts</th></tr></thead>
+          <thead><tr className="text-xs text-zinc-500 border-b"><th className="px-3 py-2 text-left">Keyword</th><th className="px-3 py-2 text-left">Sumber</th><th className="px-3 py-2 text-left">Status</th><th className="px-3 py-2 text-left">Attempts</th><th className="px-3 py-2 text-left">Terakhir jalan</th></tr></thead>
           <tbody>
             {targets.map((t) => (
-              <tr key={t.id} className="border-b"><td className="px-3 py-2">{t.keyword}</td><td className="px-3 py-2">{t.source}</td><td className="px-3 py-2">{t.status}</td><td className="px-3 py-2">{t.attempts}</td></tr>
+              <tr key={t.id} className="border-b"><td className="px-3 py-2">{t.keyword}</td><td className="px-3 py-2">{t.source}</td><td className="px-3 py-2">{t.status}</td><td className="px-3 py-2">{t.attempts}</td><td className="px-3 py-2 text-zinc-500">{t.updatedAt ? new Date(t.updatedAt).toLocaleString("id-ID") : "-"}</td></tr>
             ))}
-            {targets.length === 0 && <tr><td colSpan={4} className="px-3 py-8 text-center text-zinc-400">Tidak ada target.</td></tr>}
+            {targets.length === 0 && <tr><td colSpan={5} className="px-3 py-8 text-center text-zinc-400">Tidak ada target.</td></tr>}
           </tbody>
         </table>
       </div>
