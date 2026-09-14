@@ -89,9 +89,10 @@ export default function JobsListingsPage() {
         <h1 className="text-xl font-bold">{tab} ({total})</h1>
         <div className="flex flex-wrap gap-2 items-center">
           <select className="input w-auto !py-1.5 text-sm" value={source} onChange={(e) => { setSource(e.target.value); setPage(1); }}>
-            <option value="">Glints+JobStreet</option>
+            <option value="">Semua sumber</option>
             <option value="glints">Glints</option>
             <option value="jobstreet">JobStreet</option>
+            <option value="indeed">Indeed</option>
           </select>
           {tab === "Sampah" && (
             <button className="btn-secondary text-sm !text-rose-600" disabled={busy !== "" || counts.hidden === 0} onClick={emptyTrash}>

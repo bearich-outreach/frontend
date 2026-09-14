@@ -37,7 +37,7 @@ export default function JobsDashboard() {
       <div className="flex flex-wrap justify-between items-center gap-2">
         <div>
           <h1 className="text-xl font-bold">Job Hunter — Full Remote Web Only</h1>
-          <p className="text-sm text-zinc-500">Glints + JobStreet · tanpa filter skill/gaji/kontrak · verifikasi manual via tombol Check · Gmail Batch 4 menyusul</p>
+          <p className="text-sm text-zinc-500">Glints + JobStreet + Indeed · tanpa filter skill/gaji/kontrak · verifikasi manual via tombol Check · Gmail Batch 4 menyusul</p>
         </div>
         <div className="flex gap-2">
           <Link className="btn-primary text-sm" href="/apps/jobs/listings">Buka Lowongan</Link>

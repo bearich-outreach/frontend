@@ -49,12 +49,12 @@ export default function JobsTargetsPage() {
             <option value="DONE">DONE</option>
             <option value="FAILED">FAILED</option>
           </select>
-          <button className="btn-secondary text-sm" onClick={() => post("/admin/seed")} disabled={busy}>Seed 42</button>
+          <button className="btn-secondary text-sm" onClick={() => post("/admin/seed")} disabled={busy}>Seed 63</button>
           <button className="btn-primary text-sm" onClick={() => post("/admin/scrape-next")} disabled={busy}>Scrape Next</button>
           <button className="btn-secondary text-sm" onClick={() => post("/admin/targets/retry-failed")} disabled={busy}>Retry FAILED</button>
         </div>
       </div>
-      <div className="text-sm text-zinc-500">PENDING {counts["PENDING"] ?? 0} · DONE {counts["DONE"] ?? 0} · FAILED {counts["FAILED"] ?? 0} · Putaran 42 keyword, jeda 24 jam · 1 keyword/15 mnt, max 10/hari</div>
+      <div className="text-sm text-zinc-500">PENDING {counts["PENDING"] ?? 0} · DONE {counts["DONE"] ?? 0} · FAILED {counts["FAILED"] ?? 0} · Putaran 63 keyword, jeda 24 jam · Glints tiap 15 mnt, JobStreet+Indeed max 1x/jam</div>
       <div className="card overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="text-xs text-zinc-500 border-b"><th className="px-3 py-2 text-left">Keyword</th><th className="px-3 py-2 text-left">Sumber</th><th className="px-3 py-2 text-left">Status</th><th className="px-3 py-2 text-left">Attempts</th><th className="px-3 py-2 text-left">Terakhir jalan</th></tr></thead>

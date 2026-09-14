@@ -249,7 +249,7 @@ export interface RawLead {
   lastSeenAt: string;
 }
 
-export type JobSource = "glints" | "jobstreet";
+export type JobSource = "glints" | "jobstreet" | "indeed";
 export interface JobListing {
   id: string;
   source: JobSource;
