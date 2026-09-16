@@ -79,7 +79,7 @@ export default function JobsDashboard() {
           <div>
             <div className="font-semibold text-sm">Top 10 Skill Requirement</div>
             <div className="text-xs text-zinc-400">
-              {skills ? `Dari ${skills.total} lowongan aktif · angka = jumlah lowongan` : "Memuat..."}
+              {skills ? `Dari ${skills.total} lowongan pernah terlihat (tahan hapus) · angka = jumlah lowongan` : "Memuat..."}
             </div>
           </div>
           <Link className="btn-secondary text-sm" href="/apps/jobs/skills">Lihat semua</Link>

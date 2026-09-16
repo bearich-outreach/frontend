@@ -291,5 +291,6 @@ export interface SkillRank {
 export interface SkillsResponse {
   total: number;
   skills: SkillRank[];
+  mode?: "history" | "active";
   filters: { status: string | null; source: string | null; scope?: string; days: number | null; limit: number };
 }

@@ -8,6 +8,7 @@ const GROUPS = ["Semua grup", "Frontend", "Backend", "CMS & Commerce", "Infra & 
 export default function JobsSkillsPage() {
   const [data, setData] = useState<SkillsResponse | null>(null);
   const [error, setError] = useState("");
+  const [mode, setMode] = useState<"history" | "active">("history");
   const [source, setSource] = useState("");
   const [scope, setScope] = useState("all");
   const [status, setStatus] = useState("");
@@ -15,14 +16,15 @@ export default function JobsSkillsPage() {
   const [group, setGroup] = useState(GROUPS[0]);
   const [loading, setLoading] = useState(true);
 
-  async function load(src: string, sc: string, st: string, d: string) {
+  async function load(src: string, sc: string, st: string, d: string, m: string) {
     setLoading(true);
     setError("");
     try {
-      const params = new URLSearchParams({ limit: "30" });
+      const params = new URLSearchParams({ limit: "30", mode: m });
       if (src) params.set("source", src);
       else if (sc && sc !== "all") params.set("scope", sc);
-      if (st) params.set("status", st);
+      // Filter status hanya berlaku untuk mode Aktif; riwayat mengabaikannya.
+      if (m === "active" && st) params.set("status", st);
       if (d) params.set("days", d);
       setData(await apiGet<SkillsResponse>(`${JOBS_API}/skills?${params}`));
     } catch {
@@ -32,7 +34,7 @@ export default function JobsSkillsPage() {
     }
   }
 
-  useEffect(() => { load(source, scope, status, days); }, [source, scope, status, days]);
+  useEffect(() => { load(source, scope, status, days, mode); }, [source, scope, status, days, mode]);
 
   const skills = (data?.skills ?? []).filter((s) => group === GROUPS[0] || s.group === group);
   const max = skills[0]?.count ?? 1;
@@ -43,10 +45,24 @@ export default function JobsSkillsPage() {
         <div>
           <h1 className="text-xl font-bold">Top Skill Requirement</h1>
           <p className="text-sm text-zinc-500">
-            {data ? `Dari ${data.total} lowongan aktif (tanpa Sampah) · 1 lowongan = 1 vote per skill` : "Memuat..."}
+            {data
+              ? mode === "history"
+                ? `Dari ${data.total} lowongan pernah terlihat (tetap tercatat walau dihapus) · 1 lowongan = 1 vote per skill`
+                : `Dari ${data.total} lowongan aktif (tanpa Sampah) · 1 lowongan = 1 vote per skill`
+              : "Memuat..."}
           </p>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
+          {(["history", "active"] as const).map((m) => (
+            <button
+              key={m}
+              className={mode === m ? "btn-primary text-sm" : "btn-secondary text-sm"}
+              onClick={() => setMode(m)}
+              title={m === "history" ? "Riwayat permanen — tahan hapus lowongan" : "Hanya lowongan aktif (tanpa Sampah)"}
+            >
+              {m === "history" ? "Riwayat" : "Aktif"}
+            </button>
+          ))}
           {(["all", "id", "global"] as const).map((sc) => (
             <button
               key={sc}
@@ -63,7 +79,7 @@ export default function JobsSkillsPage() {
             <option value="indeed">Indeed</option>
             <option value="openwebninja">OpenWebNinja</option>
           </select>
-          <select className="input w-auto !py-1.5 text-sm" value={status} onChange={(e) => setStatus(e.target.value)}>
+          <select className="input w-auto !py-1.5 text-sm" value={status} onChange={(e) => setStatus(e.target.value)} disabled={mode === "history"} title={mode === "history" ? "Filter status hanya berlaku di mode Aktif" : undefined}>
             <option value="">Semua status</option>
             <option value="New">New</option>
             <option value="Saved">Saved</option>
@@ -114,7 +130,9 @@ export default function JobsSkillsPage() {
         </div>
       )}
       <div className="text-xs text-zinc-400">
-        Cara baca: angka = jumlah lowongan yang menyebut skill itu. % = porsi dari total lowongan aktif pada filter ini. Data lama (sebelum update ini) hanya dihitung dari judul sampai re-scrape berjalan.
+        {mode === "history"
+          ? "Mode Riwayat: angka = jumlah lowongan yang pernah menyebut skill itu (termasuk yang sudah dihapus/Sampah). Cocok untuk mencatat skill yang sering keluar lalu dipelajari. Pindah ke mode Aktif untuk melihat komposisi lowongan yang tersedia saat ini."
+          : "Mode Aktif: angka = jumlah lowongan aktif yang menyebut skill itu. % = porsi dari total lowongan aktif pada filter ini. Data lama (sebelum update ini) hanya dihitung dari judul sampai re-scrape berjalan."}
       </div>
     </div>
   );
