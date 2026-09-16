@@ -258,6 +258,7 @@ export interface JobListing {
   company: string;
   location: string;
   url: string;
+  clickUrl?: string;
   salaryText?: string;
   remoteLabel: "Remote" | "Perlu Cek";
   reviewFlag: boolean;
@@ -278,4 +279,17 @@ export interface JobTarget {
   lastError?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SkillRank {
+  skill: string;
+  group: string;
+  count: number;
+  pct: number;
+}
+
+export interface SkillsResponse {
+  total: number;
+  skills: SkillRank[];
+  filters: { status: string | null; source: string | null; days: number | null; limit: number };
 }

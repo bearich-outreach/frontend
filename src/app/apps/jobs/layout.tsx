@@ -14,6 +14,7 @@ export default function JobsLayout({
       nav={[
         { href: "/apps/jobs", label: "Dashboard" },
         { href: "/apps/jobs/listings", label: "Lowongan" },
+        { href: "/apps/jobs/skills", label: "Top Skills" },
         { href: "/apps/jobs/targets", label: "Targets" },
         { href: "/apps/jobs/raw", label: "Raw" },
       ]}
