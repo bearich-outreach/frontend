@@ -8,6 +8,10 @@ interface Stats {
   listings: { total: number; byStatus: Record<string, number>; hidden: number };
   targets: { total: number; byStatus: Record<string, number> };
   raw: number;
+  scope?: {
+    id: { total: number; byStatus: Record<string, number>; hidden: number };
+    global: { total: number; byStatus: Record<string, number>; hidden: number };
+  };
 }
 
 export default function JobsDashboard() {
@@ -44,6 +48,7 @@ export default function JobsDashboard() {
         </div>
         <div className="flex gap-2">
           <Link className="btn-primary text-sm" href="/apps/jobs/listings">Buka Lowongan</Link>
+          <Link className="btn-secondary text-sm" href="/apps/jobs/global">Global Remote</Link>
           <Link className="btn-secondary text-sm" href="/apps/jobs/skills">Top Skills</Link>
           <Link className="btn-secondary text-sm" href="/apps/jobs/targets">Targets</Link>
         </div>
@@ -57,6 +62,18 @@ export default function JobsDashboard() {
           </div>
         ))}
       </div>
+      {stats.scope && (
+        <Link href="/apps/jobs/global" className="card p-4 flex justify-between items-center hover:shadow transition-shadow">
+          <div>
+            <div className="text-xs text-zinc-500">Global Remote <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-700">via API</span></div>
+            <div className="text-2xl font-bold">{stats.scope.global.total}</div>
+            <div className="text-xs text-zinc-400">
+              New {stats.scope.global.byStatus["New"] ?? 0} · Saved {stats.scope.global.byStatus["Saved"] ?? 0} · Applied {stats.scope.global.byStatus["Applied"] ?? 0} · Sampah {stats.scope.global.hidden}
+            </div>
+          </div>
+          <div className="text-sm text-zinc-400">Buka →</div>
+        </Link>
+      )}
       <div className="card p-4">
         <div className="flex justify-between items-center mb-3">
           <div>

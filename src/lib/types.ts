@@ -249,7 +249,7 @@ export interface RawLead {
   lastSeenAt: string;
 }
 
-export type JobSource = "glints" | "jobstreet" | "indeed";
+export type JobSource = "glints" | "jobstreet" | "indeed" | "openwebninja";
 export interface JobListing {
   id: string;
   source: JobSource;
@@ -291,5 +291,5 @@ export interface SkillRank {
 export interface SkillsResponse {
   total: number;
   skills: SkillRank[];
-  filters: { status: string | null; source: string | null; days: number | null; limit: number };
+  filters: { status: string | null; source: string | null; scope?: string; days: number | null; limit: number };
 }

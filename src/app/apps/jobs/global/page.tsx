@@ -7,13 +7,16 @@ import { Pagination } from "@/components/pagination";
 type Tab = "New" | "Saved" | "Applied" | "Interview" | "Rejected" | "Sampah";
 const TABS: Tab[] = ["New", "Saved", "Applied", "Interview", "Rejected", "Sampah"];
 
+// Section terpisah dari Lowongan: hanya source openwebninja (global remote via API).
+const SOURCE = "openwebninja";
+
 interface Stats {
   listings: { total: number; byStatus: Record<string, number>; hidden: number };
-  scope?: { id: { total: number; byStatus: Record<string, number>; hidden: number } };
+  scope?: { global: { total: number; byStatus: Record<string, number>; hidden: number } };
 }
 
 const EMPTY_TEXT: Record<Tab, string> = {
-  New: "Antrean kosong. Seed + Scrape Next di halaman Targets.",
+  New: "Belum ada lowongan global. Seed OWN + trigger own-next (lihat Targets / scheduler status).",
   Saved: "Belum ada yang disimpan.",
   Applied: "Belum ada yang dilamar.",
   Interview: "Belum ada yang sampai interview.",
@@ -21,21 +24,19 @@ const EMPTY_TEXT: Record<Tab, string> = {
   Sampah: "Sampah kosong.",
 };
 
-export default function JobsListingsPage() {
+export default function JobsGlobalPage() {
   const [listings, setListings] = useState<JobListing[]>([]);
   const [tab, setTab] = useState<Tab>("New");
-  const [source, setSource] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [counts, setCounts] = useState<{ byStatus: Record<string, number>; hidden: number }>({ byStatus: {}, hidden: 0 });
   const [busy, setBusy] = useState("");
 
-  async function load(p: number, t: Tab, src: string) {
+  async function load(p: number, t: Tab) {
     const params = new URLSearchParams();
     if (t === "Sampah") params.set("hidden", "trash");
     else params.set("status", t);
-    if (src) params.set("source", src);
-    else params.set("scope", "id"); // section Lowongan: kunci ke ID, tanpa global
+    params.set("source", SOURCE);
     params.set("page", String(p));
     const d = await apiFetch(`${JOBS_API}/listings?${params}`).then((r) => r.json()) as { listings: JobListing[]; total: number };
     setListings(d.listings);
@@ -45,18 +46,18 @@ export default function JobsListingsPage() {
   async function loadCounts() {
     try {
       const s = await apiGet<Stats>(`${JOBS_API}/stats`);
-      const id = s.scope?.id ?? s.listings;
-      setCounts({ byStatus: id.byStatus ?? {}, hidden: id.hidden ?? 0 });
+      const g = s.scope?.global ?? { byStatus: {}, hidden: 0 };
+      setCounts({ byStatus: g.byStatus ?? {}, hidden: g.hidden ?? 0 });
     } catch { /* badge count opsional — list tetap jalan */ }
   }
 
-  useEffect(() => { load(page, tab, source); }, [page, tab, source]);
+  useEffect(() => { load(page, tab); }, [page, tab]);
   useEffect(() => { loadCounts(); }, []);
 
   async function act(id: string, path: string, body?: unknown) {
     setBusy(id + path);
     await apiFetch(`${JOBS_API}/listings/${id}${path}`, body ? { method: "POST", body: JSON.stringify(body) } : { method: "POST" });
-    await Promise.all([load(page, tab, source), loadCounts()]);
+    await Promise.all([load(page, tab), loadCounts()]);
     setBusy("");
   }
 
@@ -68,14 +69,11 @@ export default function JobsListingsPage() {
   async function emptyTrash() {
     const n = counts.hidden;
     if (!n) return;
-    if (!confirm(`Hapus permanen ${n} lowongan di Sampah? Tidak bisa dikembalikan.`)) return;
+    if (!confirm(`Hapus permanen ${n} lowongan global di Sampah? Tidak bisa dikembalikan.`)) return;
     if (!confirm(`Yakin? ${n} lowongan akan hilang selamanya.`)) return;
     setBusy("empty-trash");
-    const params = new URLSearchParams({ hidden: "trash", confirm: "yes" });
-    if (source) params.set("source", source);
-    else params.set("scope", "id");
-    await apiFetch(`${JOBS_API}/listings?${params}`, { method: "DELETE" });
-    await Promise.all([load(1, "Sampah", source), loadCounts()]);
+    await apiFetch(`${JOBS_API}/listings?hidden=trash&confirm=yes&source=${SOURCE}`, { method: "DELETE" });
+    await Promise.all([load(1, "Sampah"), loadCounts()]);
     setPage(1);
     setBusy("");
   }
@@ -92,14 +90,14 @@ export default function JobsListingsPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap justify-between items-center gap-2">
-        <h1 className="text-xl font-bold">{tab} ({total})</h1>
+        <div>
+          <h1 className="text-xl font-bold">{tab} ({total})</h1>
+          <p className="text-sm text-zinc-500">
+            Global remote via API · tanpa filter lokasi — seadanya mengikuti sistem yang berjalan
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2 items-center">
-          <select className="input w-auto !py-1.5 text-sm" value={source} onChange={(e) => { setSource(e.target.value); setPage(1); }}>
-            <option value="">Semua (ID)</option>
-            <option value="glints">Glints</option>
-            <option value="jobstreet">JobStreet</option>
-            <option value="indeed">Indeed</option>
-          </select>
+          <span className="text-xs px-2 py-1 rounded bg-sky-100 text-sky-700">via API · global</span>
           {tab === "Sampah" && (
             <button className="btn-secondary text-sm !text-rose-600" disabled={busy !== "" || counts.hidden === 0} onClick={emptyTrash}>
               {busy === "empty-trash" ? "Menghapus..." : `Hapus Semua Sampah (${counts.hidden})`}
@@ -114,14 +112,14 @@ export default function JobsListingsPage() {
           </button>
         ))}
       </div>
-      <div className="text-sm text-zinc-500">Sort skor + terbaru. Item pindah tab otomatis setelah aksi. Hanya terverifikasi Remote yang masuk.</div>
+      <div className="text-sm text-zinc-500">Sort skor + terbaru. Item pindah tab otomatis setelah aksi.</div>
       <div className="space-y-2">
         {listings.map((l) => (
           <div key={l.id} className="card p-4 space-y-2">
             <div className="flex flex-wrap justify-between gap-2">
               <div>
                 <div className="font-semibold">{l.title} <span className="text-xs text-zinc-400">· {l.company}</span></div>
-                <div className="text-xs text-zinc-500">{l.source} · {l.location || "lokasi tak diketahui"} · Skor {l.score} · {l.status} · {l.postedDate ? new Date(l.postedDate).toLocaleDateString("id-ID") : "tanggal tak diketahui"}</div>
+                <div className="text-xs text-zinc-500">{l.location || "lokasi tak diketahui"} · Skor {l.score} · {l.status} · {l.postedDate ? new Date(l.postedDate).toLocaleDateString("id-ID") : "tanggal tak diketahui"}{l.salaryText ? ` · ${l.salaryText}` : ""}</div>
               </div>
               <span className={l.remoteLabel === "Remote" ? "text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-700" : "text-xs px-2 py-1 rounded bg-amber-100 text-amber-700"}>
                 {l.remoteLabel}{l.reviewFlag ? " — cek detail" : ""}
@@ -133,7 +131,7 @@ export default function JobsListingsPage() {
                 <>
                   <button className="btn-secondary text-sm" disabled={busy !== ""} onClick={() => act(l.id, "/status", { status: "Saved" })}>Saved</button>
                   <button className="btn-secondary text-sm" disabled={busy !== ""} onClick={() => act(l.id, "/status", { status: "Applied" })}>Applied</button>
-                  <button className="btn-secondary text-sm !text-rose-600" disabled={busy !== ""} onClick={() => { if (confirm("Hapus ke Sampah? (bukan fully remote)")) act(l.id, "/hide"); }}>Hapus</button>
+                  <button className="btn-secondary text-sm !text-rose-600" disabled={busy !== ""} onClick={() => { if (confirm("Hapus ke Sampah?")) act(l.id, "/hide"); }}>Hapus</button>
                 </>
               )}
               {tab === "Saved" && (
@@ -160,7 +158,7 @@ export default function JobsListingsPage() {
               {tab === "Sampah" && (
                 <>
                   <button className="btn-secondary text-sm" disabled={busy !== ""} onClick={() => act(l.id, "/restore")}>Kembalikan</button>
-                  <button className="btn-secondary text-sm !text-rose-600" disabled={busy !== ""} onClick={() => { if (confirm("Hapus permanen?")) { setBusy(l.id); apiFetch(`${JOBS_API}/listings/${l.id}`, { method: "DELETE" }).then(() => Promise.all([load(page, tab, source), loadCounts()])).finally(() => setBusy("")); } }}>Hapus Permanen</button>
+                  <button className="btn-secondary text-sm !text-rose-600" disabled={busy !== ""} onClick={() => { if (confirm("Hapus permanen?")) { setBusy(l.id); apiFetch(`${JOBS_API}/listings/${l.id}`, { method: "DELETE" }).then(() => Promise.all([load(page, tab), loadCounts()])).finally(() => setBusy("")); } }}>Hapus Permanen</button>
                 </>
               )}
             </div>

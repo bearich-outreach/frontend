@@ -9,17 +9,19 @@ export default function JobsSkillsPage() {
   const [data, setData] = useState<SkillsResponse | null>(null);
   const [error, setError] = useState("");
   const [source, setSource] = useState("");
+  const [scope, setScope] = useState("all");
   const [status, setStatus] = useState("");
   const [days, setDays] = useState("");
   const [group, setGroup] = useState(GROUPS[0]);
   const [loading, setLoading] = useState(true);
 
-  async function load(src: string, st: string, d: string) {
+  async function load(src: string, sc: string, st: string, d: string) {
     setLoading(true);
     setError("");
     try {
       const params = new URLSearchParams({ limit: "30" });
       if (src) params.set("source", src);
+      else if (sc && sc !== "all") params.set("scope", sc);
       if (st) params.set("status", st);
       if (d) params.set("days", d);
       setData(await apiGet<SkillsResponse>(`${JOBS_API}/skills?${params}`));
@@ -30,7 +32,7 @@ export default function JobsSkillsPage() {
     }
   }
 
-  useEffect(() => { load(source, status, days); }, [source, status, days]);
+  useEffect(() => { load(source, scope, status, days); }, [source, scope, status, days]);
 
   const skills = (data?.skills ?? []).filter((s) => group === GROUPS[0] || s.group === group);
   const max = skills[0]?.count ?? 1;
@@ -45,11 +47,21 @@ export default function JobsSkillsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
+          {(["all", "id", "global"] as const).map((sc) => (
+            <button
+              key={sc}
+              className={scope === sc && !source ? "btn-primary text-sm" : "btn-secondary text-sm"}
+              onClick={() => { setScope(sc); setSource(""); }}
+            >
+              {sc === "all" ? "Semua" : sc === "id" ? "ID" : "Global"}
+            </button>
+          ))}
           <select className="input w-auto !py-1.5 text-sm" value={source} onChange={(e) => setSource(e.target.value)}>
             <option value="">Semua sumber</option>
             <option value="glints">Glints</option>
             <option value="jobstreet">JobStreet</option>
             <option value="indeed">Indeed</option>
+            <option value="openwebninja">OpenWebNinja</option>
           </select>
           <select className="input w-auto !py-1.5 text-sm" value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="">Semua status</option>
