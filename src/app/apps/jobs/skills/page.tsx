@@ -77,6 +77,7 @@ export default function JobsSkillsPage() {
             <option value="glints">Glints</option>
             <option value="jobstreet">JobStreet</option>
             <option value="indeed">Indeed</option>
+            <option value="dealls">Dealls</option>
             <option value="openwebninja">OpenWebNinja</option>
           </select>
           <select className="input w-auto !py-1.5 text-sm" value={status} onChange={(e) => setStatus(e.target.value)} disabled={mode === "history"} title={mode === "history" ? "Filter status hanya berlaku di mode Aktif" : undefined}>

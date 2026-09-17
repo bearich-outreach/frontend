@@ -99,6 +99,7 @@ export default function JobsListingsPage() {
             <option value="glints">Glints</option>
             <option value="jobstreet">JobStreet</option>
             <option value="indeed">Indeed</option>
+            <option value="dealls">Dealls</option>
           </select>
           {tab === "Sampah" && (
             <button className="btn-secondary text-sm !text-rose-600" disabled={busy !== "" || counts.hidden === 0} onClick={emptyTrash}>
