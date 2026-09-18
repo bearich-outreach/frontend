@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { JOBS_API, apiFetch, apiGet } from "@/lib/api";
-import { JobListing } from "@/lib/types";
+import { JobListing, ScoreBreakdown } from "@/lib/types";
 import { Pagination } from "@/components/pagination";
 
 type Tab = "New" | "Saved" | "Applied" | "Interview" | "Rejected" | "Sampah";
@@ -29,6 +29,10 @@ export default function JobsListingsPage() {
   const [total, setTotal] = useState(0);
   const [counts, setCounts] = useState<{ byStatus: Record<string, number>; hidden: number }>({ byStatus: {}, hidden: 0 });
   const [busy, setBusy] = useState("");
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [breakdowns, setBreakdowns] = useState<Record<string, ScoreBreakdown>>({});
+  const [scoreBusy, setScoreBusy] = useState("");
+  const [scoreErr, setScoreErr] = useState<Record<string, string>>({});
 
   async function load(p: number, t: Tab, src: string) {
     const params = new URLSearchParams();
@@ -52,6 +56,24 @@ export default function JobsListingsPage() {
 
   useEffect(() => { load(page, tab, source); }, [page, tab, source]);
   useEffect(() => { loadCounts(); }, []);
+  // Jabaran skor: tutup otomatis saat ganti tab/halaman/filter.
+  useEffect(() => { setOpenId(null); }, [tab, page, source]);
+
+  async function toggleScore(id: string) {
+    if (openId === id) { setOpenId(null); return; }
+    setOpenId(id);
+    if (breakdowns[id]) return; // cache: fetch sekali per listing
+    setScoreBusy(id);
+    try {
+      const d = await apiGet<ScoreBreakdown>(`${JOBS_API}/listings/${id}/score`);
+      setBreakdowns((m) => ({ ...m, [id]: d }));
+      setScoreErr((m) => { const n = { ...m }; delete n[id]; return n; });
+    } catch {
+      setScoreErr((m) => ({ ...m, [id]: "Gagal memuat rincian skor." }));
+    } finally {
+      setScoreBusy("");
+    }
+  }
 
   async function act(id: string, path: string, body?: unknown) {
     setBusy(id + path);
@@ -122,12 +144,38 @@ export default function JobsListingsPage() {
             <div className="flex flex-wrap justify-between gap-2">
               <div>
                 <div className="font-semibold">{l.title} <span className="text-xs text-zinc-400">· {l.company}</span></div>
-                <div className="text-xs text-zinc-500">{l.source} · {l.location || "lokasi tak diketahui"} · Skor {l.score} · {l.status} · {l.postedDate ? new Date(l.postedDate).toLocaleDateString("id-ID") : "tanggal tak diketahui"}</div>
+                <div className="text-xs text-zinc-500">{l.source} · {l.location || "lokasi tak diketahui"} · <button className="underline decoration-dotted underline-offset-2" title="Lihat rincian skor" onClick={() => toggleScore(l.id)}>Skor {l.score} ⓘ</button> · {l.status} · {l.postedDate ? new Date(l.postedDate).toLocaleDateString("id-ID") : "tanggal tak diketahui"}</div>
               </div>
               <span className={l.remoteLabel === "Remote" ? "text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-700" : "text-xs px-2 py-1 rounded bg-amber-100 text-amber-700"}>
                 {l.remoteLabel}{l.reviewFlag ? " — cek detail" : ""}
               </span>
             </div>
+            {openId === l.id && (
+              <div className="text-sm rounded bg-zinc-50 px-3 py-2">
+                {scoreBusy === l.id && <div className="text-xs text-zinc-500">Memuat rincian...</div>}
+                {scoreErr[l.id] && !breakdowns[l.id] ? (
+                  <div className="text-xs text-rose-600">{scoreErr[l.id]}</div>
+                ) : breakdowns[l.id] ? (
+                  <div className="space-y-0.5">
+                    {breakdowns[l.id].parts.map((p, i) => (
+                      <div key={i} className="flex gap-2">
+                        <span className={`w-10 shrink-0 text-right font-mono ${p.points > 0 ? "text-emerald-700" : p.points < 0 ? "text-rose-700" : "text-zinc-400"}`}>
+                          {p.points > 0 ? `+${p.points}` : p.points}
+                        </span>
+                        <span className="text-zinc-600">{p.label}</span>
+                      </div>
+                    ))}
+                    <div className="flex gap-2 border-t border-zinc-200 pt-0.5 font-bold">
+                      <span className="w-10 shrink-0 text-right font-mono">= {breakdowns[l.id].score}</span>
+                      <span>Total</span>
+                    </div>
+                    {breakdowns[l.id].score !== l.score && (
+                      <div className="text-xs text-zinc-400">Tersimpan di kartu: {l.score} — selisih kecil wajar bila kata penentu terpotong snippet.</div>
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            )}
             <div className="flex flex-wrap gap-2">
               <a className="btn-primary text-sm" href={l.url} target="_blank" rel="noreferrer">Check</a>
               {tab === "New" && (

@@ -288,6 +288,17 @@ export interface SkillRank {
   pct: number;
 }
 
+export interface ScorePart {
+  key: string;
+  label: string;
+  points: number;
+}
+
+export interface ScoreBreakdown {
+  listingId: string;
+  score: number;
+  parts: ScorePart[];
+}
 export interface SkillsResponse {
   total: number;
   skills: SkillRank[];
